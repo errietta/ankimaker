@@ -20,6 +20,13 @@ function App() {
     return apiKey ? apiKey :null;
   });
 
+
+  const clearAll = () => {
+    setSentences([{ text: '', meaning: '' }]); // Reset to a single empty sentence field
+    localStorage.removeItem('sentences'); // Clear localStorage
+  };
+
+
   // Save sentences to local storage whenever it changes
   useEffect(() => {
     localStorage.setItem('apiKey', apiKey);
@@ -118,6 +125,7 @@ function App() {
       ))}
       <button onClick={addSentence}>+ Add Another Sentence</button>
       <button onClick={downloadCSV}>Get CSV</button>
+      <button onClick={clearAll}>Clear All</button>
     </div>
   );
 }
