@@ -48,7 +48,7 @@ function App() {
       const requestBody = {text: sentence.text};
       const APIBASE='https://talktomodachi-22fa28ff3379.herokuapp.com/';
       const API_KEY = apiKey || prompt('api key');
-      apiKey = API_KEY;
+      setApiKey(API_KEY);
 
       const response = await fetch(`${APIBASE}meaning`, {
         method: 'POST',
@@ -59,6 +59,7 @@ function App() {
         body: JSON.stringify(requestBody),
       });
       const responseData = await response.json();
+      console.log(responseData);
       resolve(response);
     });
 
