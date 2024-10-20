@@ -128,6 +128,10 @@ function App() {
       <button onClick={addSentence}>+ Add Another Sentence</button>
       <button onClick={downloadCSV}>Get CSV</button>
       <button onClick={clearAll}>Clear All</button>
+      <div>
+        Api key
+        <input value={apiKey} onChange={event => setApiKey(event.value)} type="text" style="width:100%"/>
+      </div>
     </div>
   );
 }
