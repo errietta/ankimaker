@@ -62,7 +62,7 @@ function App() {
       });
       const responseData = await response.json();
       console.log(responseData);
-      resolve(response);
+      resolve(responseData);
     });
 
     const newSentences = [...sentences];
