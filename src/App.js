@@ -13,12 +13,23 @@ function App() {
     localStorage.setItem('sentences', JSON.stringify(sentences));
   }, [sentences]);
 
+  const [apiKey, setApiKey] = useState(() => {
+    const apiKey = localStorage.getItem('api-key');
+    return apiKey ? apiKey :null;
+  });
+
+  // Save sentences to local storage whenever it changes
+  useEffect(() => {
+    localStorage.setItem('apiKey', apiKey);
+  }, [apiKey]);
+
+
+
   // Add new sentence
   const addSentence = () => {
     setSentences([...sentences, { text: '', meaning: '', readning: '' }]);
   };
 
-  let apiKey = '';
 
   // Handle input change
   const handleSentenceChange = (index, event) => {
@@ -36,7 +47,7 @@ function App() {
       //setTimeout(() => { resolve(`Meaning of "${sentence.text}"`); }, 1000);
       const requestBody = {text: sentence.text};
       const APIBASE='https://talktomodachi-22fa28ff3379.herokuapp.com/';
-      const API_KEY=apiKey || prompt('api key');
+      const API_KEY = apiKey || prompt('api key');
       apiKey = API_KEY;
 
       const response = await fetch(`${APIBASE}meaning`, {
