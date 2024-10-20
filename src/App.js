@@ -16,7 +16,8 @@ function App() {
   }, [sentences]);
 
   const [apiKey, setApiKey] = useState(() => {
-    const apiKey = localStorage.getItem('api-key');
+    const apiKey = localStorage.getItem('apiKey');
+    console.log({apiKey});
     return apiKey ? apiKey :null;
   });
 
@@ -30,6 +31,7 @@ function App() {
   // Save sentences to local storage whenever it changes
   useEffect(() => {
     localStorage.setItem('apiKey', apiKey);
+    console.log('set', apiKey);
   }, [apiKey]);
 
 
