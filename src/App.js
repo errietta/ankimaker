@@ -18,6 +18,8 @@ function App() {
     setSentences([...sentences, { text: '', meaning: '', readning: '' }]);
   };
 
+  let apiKey = '';
+
   // Handle input change
   const handleSentenceChange = (index, event) => {
     const newSentences = [...sentences];
@@ -30,11 +32,12 @@ function App() {
     const sentence = sentences[index];
     if (!sentence.text) return;
 
-    const meaning = await new Promise((resolve) => {
+    const meaning = await new Promise(async (resolve) => {
       //setTimeout(() => { resolve(`Meaning of "${sentence.text}"`); }, 1000);
-      requestBody = {text: sentence.text};
+      const requestBody = {text: sentence.text};
       const APIBASE='https://talktomodachi-22fa28ff3379.herokuapp.com/';
-      const API_KEY=prompt('api key');
+      const API_KEY=apiKey || prompt('api key');
+      apiKey = API_KEY;
 
       const response = await fetch(`${APIBASE}meaning`, {
         method: 'POST',
