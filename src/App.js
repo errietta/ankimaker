@@ -102,7 +102,7 @@ function App() {
 
     const link = document.createElement('a');
     link.setAttribute('href', url);
-    link.setAttribute('download', 'sentences.csv');
+    link.setAttribute('download', 'anki-sentences.csv');
     document.body.appendChild(link); // Required for FF
     link.click();
     document.body.removeChild(link);
