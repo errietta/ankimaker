@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
+import Papa from 'papaparse';
+
 
 function App() {
   const [sentences, setSentences] = useState(() => {
@@ -64,8 +66,9 @@ function App() {
     });
 
     const newSentences = [...sentences];
-    newSentences[index].reading = meaning.reading;
-    newSentences[index].meaning = meaning.meaning;
+    newSentences[index].reading = meaning.reply.reading;
+    newSentences[index].meaning = meaning.reply.meaning;
+    newSentences[index].text = meaning.reply.sentence;
     setSentences(newSentences);
   };
 
@@ -84,14 +87,12 @@ function App() {
       ...sentences.map((s) => [s.text, s.meaning, s.reading]),
     ];
 
-    const csvContent =
-      'data:text/csv;charset=utf-8,' +
-      csvRows.map((row) => row.join(',')).join('\n');
+    const csv = Papa.unparse(csvRows);
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
 
-    // Create link element for download
-    const encodedUri = encodeURI(csvContent);
     const link = document.createElement('a');
-    link.setAttribute('href', encodedUri);
+    link.setAttribute('href', url);
     link.setAttribute('download', 'sentences.csv');
     document.body.appendChild(link); // Required for FF
     link.click();
