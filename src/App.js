@@ -5,7 +5,7 @@ function App() {
   const [sentences, setSentences] = useState(() => {
     // Retrieve sentences from local storage on page load
     const savedSentences = localStorage.getItem('sentences');
-    return savedSentences ? JSON.parse(savedSentences) : [{ text: '', meaning: '' }];
+    return savedSentences ? JSON.parse(savedSentences) : [{ text: '', meaning: '', reading: ''}];
   });
 
   // Save sentences to local storage whenever it changes
@@ -15,7 +15,7 @@ function App() {
 
   // Add new sentence
   const addSentence = () => {
-    setSentences([...sentences, { text: '', meaning: '' }]);
+    setSentences([...sentences, { text: '', meaning: '', readning: '' }]);
   };
 
   // Handle input change
@@ -30,15 +30,27 @@ function App() {
     const sentence = sentences[index];
     if (!sentence.text) return;
 
-    // Mock API call
     const meaning = await new Promise((resolve) => {
-      setTimeout(() => {
-        resolve(`Meaning of "${sentence.text}"`);
-      }, 1000);
+      //setTimeout(() => { resolve(`Meaning of "${sentence.text}"`); }, 1000);
+      requestBody = {text: sentence.text};
+      const APIBASE='https://talktomodachi-22fa28ff3379.herokuapp.com/';
+      const API_KEY=prompt('api key');
+
+      const response = await fetch(`${APIBASE}meaning`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': API_KEY || '',
+        },
+        body: JSON.stringify(requestBody),
+      });
+      const responseData = await response.json();
+      resolve(response);
     });
 
     const newSentences = [...sentences];
-    newSentences[index].meaning = meaning;
+    newSentences[index].reading = meaning.reading;
+    newSentences[index].meaning = meaning.meaning;
     setSentences(newSentences);
   };
 
@@ -53,8 +65,8 @@ function App() {
 
     // Create CSV data
     const csvRows = [
-      ['Sentence', 'Meaning'],
-      ...sentences.map((s) => [s.text, s.meaning]),
+      ['Sentence', 'Meaning', 'Reading'],
+      ...sentences.map((s) => [s.text, s.meaning, s.reading]),
     ];
 
     const csvContent =
@@ -85,6 +97,7 @@ function App() {
           ></textarea>
           <button onClick={() => getMeaning(index)}>Get Meaning</button>
           {sentence.meaning && <p>Meaning: {sentence.meaning}</p>}
+          {sentence.reading && <p>Reading: {sentence.reading}</p>}
         </div>
       ))}
       <button onClick={addSentence}>+ Add Another Sentence</button>
