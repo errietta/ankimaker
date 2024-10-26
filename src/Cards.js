@@ -121,9 +121,10 @@ function Cards() {
           {sentence.reading && <p>Reading: {sentence.reading}</p>}
         </div>
       ))}
-      <button onClick={addSentence}>+ Add Another Sentence</button>
-      <button onClick={downloadCSV}>Get CSV</button>
-      <button onClick={clearAll}>Clear All</button>
+      <button className="button-add" onClick={addSentence}>+ Add Another Sentence</button>
+      <button className="button-download" onClick={downloadCSV}>Get CSV</button>
+      <button className="button-danger" onClick={clearAll}>Clear All</button>
+      <br/><br/>
       <div>
         <LogoutButton/>
       </div>

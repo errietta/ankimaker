@@ -5,7 +5,7 @@ const LogoutButton = () => {
     const { logout } = useAuth0();
 
     return (
-          <button onClick={() => logout({ logoutParams: { returnTo: window.location.href } })}>
+          <button className="logout-button" onClick={() => logout({ logoutParams: { returnTo: window.location.href } })}>
             Log Out
           </button>
         );
