@@ -127,9 +127,9 @@ function Cards() {
         </div>
       ))}
 
-      <button className="button-add">{t('add_sentence')}</button>
-      <button className="button-download">{t('get_csv')}</button>
-      <button className="button-danger">{t('clear_all')}</button>
+      <button className="button-add" onClick={addSentence}>{t('add_sentence')}</button>
+      <button className="button-download" onClick={downloadCSV}>{t('get_csv')}</button>
+      <button className="button-danger" onClick={clearAll}>{t('clear_all')}</button>
       <br/><br/>
       <div>
         <LogoutButton/>
