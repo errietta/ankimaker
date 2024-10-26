@@ -92,8 +92,8 @@ function App() {
 
     // Create CSV data
     const csvRows = [
-      ['Sentence', 'Meaning', 'Reading'],
-      ...sentences.map((s) => [s.text, s.meaning, s.reading]),
+      ['Sentence', 'Reading', 'Meaning'],
+      ...sentences.map((s) => [s.text, s.reading, s.meaning]),
     ];
 
     const csv = Papa.unparse(csvRows);
