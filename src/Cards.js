@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth0 } from "@auth0/auth0-react";
+import { useTranslation } from 'react-i18next';
 
 
 import LogoutButton from './LogoutButton';
@@ -9,6 +10,7 @@ import Papa from 'papaparse';
 
 function Cards() {
   const { getAccessTokenSilently } = useAuth0();
+  const { t } = useTranslation();
 
   const [sentences, setSentences] = useState(() => {
     // Retrieve sentences from local storage on page load
@@ -22,8 +24,10 @@ function Cards() {
   }, [sentences]);
 
   const clearAll = () => {
-    setSentences([{ text: '', meaning: '' }]); // Reset to a single empty sentence field
-    localStorage.removeItem('sentences'); // Clear localStorage
+    if (window.confirm("Really clear?")) {
+      setSentences([{ text: '', meaning: '' }]); // Reset to a single empty sentence field
+      localStorage.removeItem('sentences'); // Clear localStorage
+    }
   };
 
   // Add new sentence
@@ -106,24 +110,26 @@ function Cards() {
 
   return (
     <div className="app">
-      <h1>Study card generator</h1>
+      <h1>{t('welcome')}</h1>
+
       {sentences.map((sentence, index) => (
         <div key={index} className="sentence-container">
           <textarea
             value={sentence.text}
             onChange={(event) => handleSentenceChange(index, event)}
-            placeholder="Type a sentence"
+            placeholder={t('add_sentence')}
             rows="2"
             cols="30"
           ></textarea>
-          <button onClick={() => getMeaning(index)}>Get Meaning</button>
-          {sentence.meaning && <p>Meaning: {sentence.meaning}</p>}
-          {sentence.reading && <p>Reading: {sentence.reading}</p>}
+          <button onClick={() => getMeaning(index)}>{t('get_meaning')}</button>
+          {sentence.meaning && <p>{t('meaning')}: {sentence.meaning}</p>}
+          {sentence.reading && <p>{t('reading')}: {sentence.reading}</p>}
         </div>
       ))}
-      <button className="button-add" onClick={addSentence}>+ Add Another Sentence</button>
-      <button className="button-download" onClick={downloadCSV}>Get CSV</button>
-      <button className="button-danger" onClick={clearAll}>Clear All</button>
+
+      <button className="button-add">{t('add_sentence')}</button>
+      <button className="button-download">{t('get_csv')}</button>
+      <button className="button-danger">{t('clear_all')}</button>
       <br/><br/>
       <div>
         <LogoutButton/>

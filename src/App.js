@@ -12,7 +12,12 @@ function App() {
     return <div>Loading ...</div>;
   }
 
-  return isAuthenticated ? <Cards /> : <LoginButton/> ;
+    return (
+          <div>
+            <LanguageSwitcher />
+            {isAuthenticated ? <Cards /> : <LoginButton />}
+          </div>
+    );
 }
 
 export default App;

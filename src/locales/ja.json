@@ -1,0 +1,13 @@
+{
+  "welcome": "勉強カードジェネレーターへようこそ",
+  "login_message": "続行するにはログインしてください。",
+  "log_in": "ログイン",
+  "log_out": "ログアウト",
+  "add_sentence": "文を追加する",
+  "get_csv": "CSVを取得",
+  "get_meaning": "意味",
+  "clear_all": "すべてクリア",
+  "meaning": "意味",
+  "reading": "読み方"
+}
+
