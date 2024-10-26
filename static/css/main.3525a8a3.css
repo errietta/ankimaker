@@ -1,2 +1,0 @@
-.app{margin:auto;max-width:600px;padding:20px}h1{text-align:center}.sentence-container{display:flex;flex-direction:column;margin-bottom:10px}textarea{font-size:16px;margin-bottom:5px;padding:5px;width:100%}button{cursor:pointer;font-size:16px;margin-bottom:10px;padding:8px 12px}button+button{margin-left:10px}@media (max-width:600px){.sentence-container{flex-direction:column}button+button{margin-left:0}}
-/*# sourceMappingURL=main.3525a8a3.css.map*/
