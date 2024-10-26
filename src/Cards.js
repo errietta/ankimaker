@@ -106,7 +106,7 @@ function Cards() {
 
   return (
     <div className="app">
-      <h1>Sentence Meaning Fetcher</h1>
+      <h1>Study card generator</h1>
       {sentences.map((sentence, index) => (
         <div key={index} className="sentence-container">
           <textarea
