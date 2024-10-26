@@ -3,11 +3,12 @@
   "login_message": "Please log in to continue.",
   "log_in": "Log In",
   "add_sentence": "+ Add Another Sentence",
-  "get_csv": "Get CSV",
+  "get_csv": "Download CSV",
   "get_meaning": "Get meaning",
   "clear_all": "Clear All",
   "meaning": "Meaning",
   "reading": "Reading",
-  "logout": "Log out"
+  "logout": "Log out",
+  "really_clear": "Really clear?"
 }
 

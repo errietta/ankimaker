@@ -24,7 +24,7 @@ function Cards() {
   }, [sentences]);
 
   const clearAll = () => {
-    if (window.confirm("Really clear?")) {
+    if (window.confirm(t('really_clear'))) {
       setSentences([{ text: '', meaning: '' }]); // Reset to a single empty sentence field
       localStorage.removeItem('sentences'); // Clear localStorage
     }

@@ -3,6 +3,8 @@ import { initReactI18next } from 'react-i18next';
 import en from './locales/en.json';
 import ja from './locales/ja.json';
 
+const savedLanguage = localStorage.getItem('language') || 'en';
+
 // Initialize i18n
 i18n.use(initReactI18next).init({
   resources: {
@@ -13,7 +15,7 @@ i18n.use(initReactI18next).init({
       translation: ja
     },
   },
-  lng: 'en', // Default language
+  lng: savedLanguage, // Default language
   fallbackLng: 'en', // Fallback language if translation key is missing
   interpolation: {
     escapeValue: false, // React already escapes values
