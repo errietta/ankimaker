@@ -95,7 +95,7 @@ function Cards() {
     const csv = Papa.unparse(csvRows);
 
     // Add BOM to the CSV string
-    const csvWithBOM = '\ufeff' + csv;
+    const csvWithBOM = '\ufeff' + csv + '\n';
 
     // Create Blob with BOM
     const blob = new Blob([csvWithBOM], { type: 'text/csv;charset=utf-8;' });
