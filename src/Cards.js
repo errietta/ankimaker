@@ -83,30 +83,36 @@ function Cards() {
 
   // Download CSV file
   const downloadCSV = async () => {
-    // Retrieve meanings for sentences that don't have one yet
-    for (let i = 0; i < sentences.length; i++) {
-      if (!sentences[i].meaning) {
-        await getMeaning(i);
-      }
-    }
+  		// Retrieve meanings for sentences that don't have one yet
+  		for (let i = 0; i < sentences.length; i++) {
+     if (!sentences[i].meaning) {
+    	  await getMeaning(i);
+    	}
+  		}
 
-    // Create CSV data
-    const csvRows = [
-      ['Sentence', 'Reading', 'Meaning'],
-      ...sentences.map((s) => [s.text, s.reading, s.meaning]),
-    ];
+  		// Create CSV data
+  		const csvRows = [
+   	 ['Sentence', 'Reading', 'Meaning'],
+   	 ...sentences.map((s) => [s.text, s.reading, s.meaning]),
+  		];
 
-    const csv = Papa.unparse(csvRows);
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
+  		const csv = Papa.unparse(csvRows);
 
-    const link = document.createElement('a');
-    link.setAttribute('href', url);
-    link.setAttribute('download', 'anki-sentences.csv');
-    document.body.appendChild(link); // Required for FF
-    link.click();
-    document.body.removeChild(link);
-  };
+  		// Add BOM to the CSV string
+  		const csvWithBOM = '\ufeff' + csv;
+
+  		// Create Blob with BOM
+  		const blob = new Blob([csvWithBOM], { type: 'text/csv;charset=utf-8;' });
+ 	 	const url = URL.createObjectURL(blob);
+
+  		// Create download link
+ 	 	const link = document.createElement('a');
+ 	 	link.setAttribute('href', url);
+ 	 	link.setAttribute('download', 'anki-sentences.csv');
+ 	 	document.body.appendChild(link); // Required for FF
+ 	 	link.click();
+ 	 	document.body.removeChild(link);
+	};
 
   return (
     <div className="app">
