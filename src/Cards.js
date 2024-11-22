@@ -2,11 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useAuth0 } from "@auth0/auth0-react";
 import { useTranslation } from 'react-i18next';
 
-
 import LogoutButton from './LogoutButton';
 import './App.css';
 import Papa from 'papaparse';
-
 
 function Cards() {
   const { getAccessTokenSilently } = useAuth0();
@@ -15,7 +13,7 @@ function Cards() {
   const [sentences, setSentences] = useState(() => {
     // Retrieve sentences from local storage on page load
     const savedSentences = localStorage.getItem('sentences');
-    return savedSentences ? JSON.parse(savedSentences) : [{ text: '', meaning: '', reading: ''}];
+    return savedSentences ? JSON.parse(savedSentences) : [{ text: '', meaning: '', reading: '' }];
   });
 
   // Save sentences to local storage whenever it changes
@@ -32,7 +30,7 @@ function Cards() {
 
   // Add new sentence
   const addSentence = () => {
-    setSentences([...sentences, { text: '', meaning: '', readning: '' }]);
+    setSentences([...sentences, { text: '', meaning: '', reading: '' }]);
   };
 
   // Handle input change
@@ -48,9 +46,8 @@ function Cards() {
     if (!sentence.text) return;
 
     const meaning = await new Promise(async (resolve) => {
-      //setTimeout(() => { resolve(`Meaning of "${sentence.text}"`); }, 1000);
-      const requestBody = {text: sentence.text};
-      const APIBASE='https://talktomodachi-22fa28ff3379.herokuapp.com/';
+      const requestBody = { text: sentence.text };
+      const APIBASE = 'https://talktomodachi-22fa28ff3379.herokuapp.com/';
 
       const accessToken = await getAccessTokenSilently({
         authorizationParams: {
@@ -59,7 +56,7 @@ function Cards() {
         },
       });
 
-      console.log({accessToken});
+      console.log({ accessToken });
 
       const response = await fetch(`${APIBASE}meaning`, {
         method: 'POST',
@@ -81,38 +78,37 @@ function Cards() {
     setSentences(newSentences);
   };
 
-  // Download CSV file
   const downloadCSV = async () => {
-  		// Retrieve meanings for sentences that don't have one yet
-  		for (let i = 0; i < sentences.length; i++) {
-     if (!sentences[i].meaning) {
-    	  await getMeaning(i);
-    	}
-  		}
+    // Retrieve meanings for sentences that don't have one yet
+    for (let i = 0; i < sentences.length; i++) {
+      if (!sentences[i].meaning) {
+        await getMeaning(i);
+      }
+    }
 
-  		// Create CSV data
-  		const csvRows = [
-   	 ['Sentence', 'Reading', 'Meaning'],
-   	 ...sentences.map((s) => [s.text, s.reading, s.meaning]),
-  		];
+    // Create CSV data
+    const csvRows = [
+      ['Sentence', 'Reading', 'Meaning'],
+      ...sentences.map((s) => [s.text, s.reading, s.meaning]),
+    ];
 
-  		const csv = Papa.unparse(csvRows);
+    const csv = Papa.unparse(csvRows);
 
-  		// Add BOM to the CSV string
-  		const csvWithBOM = '\ufeff' + csv;
+    // Add BOM to the CSV string
+    const csvWithBOM = '\ufeff' + csv;
 
-  		// Create Blob with BOM
-  		const blob = new Blob([csvWithBOM], { type: 'text/csv;charset=utf-8;' });
- 	 	const url = URL.createObjectURL(blob);
+    // Create Blob with BOM
+    const blob = new Blob([csvWithBOM], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
 
-  		// Create download link
- 	 	const link = document.createElement('a');
- 	 	link.setAttribute('href', url);
- 	 	link.setAttribute('download', 'anki-sentences.csv');
- 	 	document.body.appendChild(link); // Required for FF
- 	 	link.click();
- 	 	document.body.removeChild(link);
-	};
+    // Create download link
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', 'anki-sentences.csv');
+    document.body.appendChild(link); // Required for FF
+    link.click();
+    document.body.removeChild(link);
+  };
 
   return (
     <div className="app">
@@ -136,9 +132,9 @@ function Cards() {
       <button className="button-add" onClick={addSentence}>{t('add_sentence')}</button>
       <button className="button-download" onClick={downloadCSV}>{t('get_csv')}</button>
       <button className="button-danger" onClick={clearAll}>{t('clear_all')}</button>
-      <br/><br/>
+      <br /><br />
       <div>
-        <LogoutButton/>
+        <LogoutButton />
       </div>
     </div>
   );
