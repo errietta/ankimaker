@@ -36,7 +36,7 @@
     "name": "Study card maker",
     "short_name": "cardmaker",
     "start_url": "https://errietta.github.io/ankimaker/index.html",
-    "scope": "https://errietta.github.io/ankimaker/index.htmlhttps://errietta.github.io/ankimaker/",
+    "scope": "https://errietta.github.io/ankimaker/",
     "id": "https://errietta.github.io/ankimaker/index.html",
     "description": "Study card maker"
 }
