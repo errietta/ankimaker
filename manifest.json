@@ -1,6 +1,20 @@
 {
   "short_name": "Anki maker",
   "name": "Anki maker",
+  "screenshots": [
+    {
+      "src": "desk.png",
+      "sizes": "1999x971",
+      "type": "image/png",
+      "form_factor": "wide"
+    },
+    {
+      "src": "mobile.png",
+      "sizes": "398x826",
+      "type": "image/png",
+      "form_factor": "narrow"
+    }
+  ],
   "icons": [
     {
       "src": "favicon.ico",
