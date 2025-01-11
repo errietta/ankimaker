@@ -1,40 +1,42 @@
 {
-  "short_name": "Anki maker",
-  "name": "Anki maker",
-  "description": "Make study cards",
-  "screenshots": [
-    {
-      "src": "desk.png",
-      "sizes": "1999x971",
-      "type": "image/png",
-      "form_factor": "wide"
-    },
-    {
-      "src": "mobile.png",
-      "sizes": "398x826",
-      "type": "image/png",
-      "form_factor": "narrow"
-    }
-  ],
-  "icons": [
-    {
-      "src": "favicon.ico",
-      "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/x-icon"
-    },
-    {
-        "src": "/android-chrome-192x192.png",
-        "sizes": "192x192",
-        "type": "image/png"
-    },
-    {
-        "src": "/android-chrome-512x512.png",
-        "sizes": "512x512",
-        "type": "image/png"
-    }
-  ],
-  "start_url": ".",
-  "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff"
+    "theme_color": "#8936FF",
+    "background_color": "#2EC6FE",
+    "icons": [
+        {
+            "purpose": "maskable",
+            "sizes": "512x512",
+            "src": "icon512_maskable.png",
+            "type": "image/png"
+        },
+        {
+            "purpose": "any",
+            "sizes": "512x512",
+            "src": "icon512_rounded.png",
+            "type": "image/png"
+        }
+    ],
+    "screenshots": [
+      {
+        "src": "desk.png",
+        "sizes": "1999x1199",
+        "type": "image/png",
+        "form_factor": "wide"
+      },
+      {
+        "src": "mobile.png",
+        "sizes": "442x982",
+        "type": "image/png",
+        "form_factor": "narrow"
+      }
+    ],
+    "orientation": "any",
+    "display": "standalone",
+    "dir": "auto",
+    "lang": "en-GB",
+    "name": "Study card maker",
+    "short_name": "cardmaker",
+    "start_url": "https://errietta.github.io/ankimaker/index.html",
+    "scope": "https://errietta.github.io/ankimaker/",
+    "id": "https://errietta.github.io/ankimaker/index.html",
+    "description": "Study card maker"
 }
