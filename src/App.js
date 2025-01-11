@@ -1,4 +1,5 @@
 import { useAuth0 } from "@auth0/auth0-react";
+import React, { useState, useEffect } from 'react';
 
 import './App.css';
 import Cards from './Cards';
