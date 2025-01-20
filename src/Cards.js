@@ -47,7 +47,7 @@ function Cards() {
 
     const meaning = await new Promise(async (resolve) => {
       const requestBody = { text: sentence.text };
-      const APIBASE = 'https://talktomodachi-22fa28ff3379.herokuapp.com/';
+      const APIBASE = 'https://ankimaker-backend-88a288e4b6bb.herokuapp.com/';
 
       const accessToken = await getAccessTokenSilently({
         authorizationParams: {
