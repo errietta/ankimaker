@@ -10,7 +10,7 @@ const LoginButton = () => {
         <div className="login-container">
             <h1>{t('welcome')}</h1>
             <p>{t('login_message')}</p>
-            <button className="login-button" onClick={() => loginWithRedirect()}>
+            <button className="login-button" onClick={() => loginWithRedirect({appState: { targetUrl: window.location.href }})}>
                 {t('log_in')}
             </button>
         </div>

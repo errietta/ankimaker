@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth0 } from "@auth0/auth0-react";
 import { useTranslation } from 'react-i18next';
 
 import LogoutButton from './LogoutButton';
+import SettingsComponent from './Settings';
 import './App.css';
 import Papa from 'papaparse';
 
@@ -110,9 +111,80 @@ function Cards() {
     document.body.removeChild(link);
   };
 
+  const [settings, setSettings] = useState(() => {
+    // Retrieve settings from local storage on page load
+    const savedSettings = localStorage.getItem('settings');
+    return savedSettings ? JSON.parse(savedSettings) : {
+      "ankConnect": true,
+      "ankiConnectUrl": "http://localhost:8765",
+      "ankiDeck": "Default",
+      "ankiModel": "Basic",
+    };
+  });
+
+  // Save settings to local storage whenever it changes
+  useEffect(() => {
+    localStorage.setItem('settings', JSON.stringify(settings));
+  }, [settings]);
+
+  const settingsUpdated = useCallback((newSettings) => {
+    setSettings({...newSettings});
+  }, []);
+
+  const [ankiResult, setAnkiResult] = useState('');
+
+  const saveToAnkiConnect = async () => {
+    // Retrieve meanings for sentences that don't have one yet
+    for (let i = 0; i < sentences.length; i++) {
+      if (!sentences[i].meaning) {
+        await getMeaning(i);
+      }
+    }
+
+    sentences.forEach(async (sentence) => {
+       const payload = {
+        "action": "addNote",
+        "version": 6,
+        "params": {
+            "note": {
+                "deckName": settings.ankiDeck,
+                "modelName": "Tango Card Format",
+                "fields": {
+                    "Expression": sentence.text,
+                    "Meaning": sentence.meaning,
+                    "Reading":sentence.reading,
+                },
+                "options": {"allowDuplicate": false},
+                "tags": ["anki-maker"],
+            }
+        },
+      }
+
+      const response = await fetch(settings.ankiConnectUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        setAnkiResult({error: `Error saving to Anki Connect: ${response.statusText}`});
+        return;
+      }
+
+      const data = await response.json();
+      console.log(data);
+      setAnkiResult(data);
+    });
+  };
+
   return (
     <div className="app">
       <h1>{t('welcome')}</h1>
+
+
+      <SettingsComponent settingsUpdated={settingsUpdated} defaultSettings={settings} />
 
       {sentences.map((sentence, index) => (
         <div key={index} className="sentence-container">
@@ -129,7 +201,21 @@ function Cards() {
         </div>
       ))}
 
+
       <button className="button-add" onClick={addSentence}>{t('add_sentence')}</button>
+      {settings.ankConnect && (
+        <button className="button-save" onClick={saveToAnkiConnect}>{t('Save to anki')}</button>
+      )}
+
+      {
+        ankiResult && (
+          <div className="result">
+          {ankiResult.error && (<p>Error: {ankiResult.error}</p>)}
+          {ankiResult.result && (<p>Success: {ankiResult.result}</p>)}
+          </div>
+        )
+      }
+
       <button className="button-download" onClick={downloadCSV}>{t('get_csv')}</button>
       <button className="button-danger" onClick={clearAll}>{t('clear_all')}</button>
       <br /><br />

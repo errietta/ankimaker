@@ -13,7 +13,7 @@ root.render(
       domain="cardmaker-dev.uk.auth0.com"
       clientId="12Z4xtf5Gl8MnVttMOtZISLcrhPfABUZ"
       authorizationParams={{
-        redirect_uri: "https://errietta.github.io/ankimaker/index.html"
+        redirect_uri: window.location.href,
       }}>
         <App />
     </Auth0Provider>

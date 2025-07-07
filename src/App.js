@@ -29,12 +29,12 @@ function App() {
     return <div>Loading ...</div>;
   }
 
-    return (
-          <div>
-            <LanguageSwitcher />
-            { (isAuthenticated || isOffline) ? <Cards /> : <LoginButton />}
-          </div>
-    );
+  return (
+        <div>
+          <LanguageSwitcher />
+          { (isAuthenticated || isOffline) ? <Cards /> : <LoginButton />}
+        </div>
+  );
 }
 
 export default App;
