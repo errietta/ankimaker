@@ -204,7 +204,7 @@ function Cards() {
 
       <button className="button-add" onClick={addSentence}>{t('add_sentence')}</button>
       {settings.ankConnect && (
-        <button className="button-save" onClick={saveToAnkiConnect}>{t('Save to anki')}</button>
+        <button className="button-save" onClick={saveToAnkiConnect}>{t('save_to_anki')}</button>
       )}
 
       {

@@ -9,6 +9,14 @@
   "meaning": "Meaning",
   "reading": "Reading",
   "logout": "Log out",
-  "really_clear": "Really clear?"
+  "really_clear": "Really clear?",
+  "save_to_anki": "Save to Anki",
+  "Settings": "Settings",
+  "Change settings": "Change settings",
+  "Anki Connect": "Anki Connect",
+  "Anki Connect URL": "Anki Connect URL",
+  "Anki deck": "Anki deck",
+  "Anki model": "Anki model",
+  "Save Settings": "Save Settings"
 }
 

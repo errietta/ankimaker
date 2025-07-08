@@ -70,7 +70,7 @@ const SettingsComponent = ({settingsUpdated, defaultSettings}) => {
               </select>
             </label>
 
-            <input type="button" value="Save Settings" onClick={(e) => {
+            <input type="button" value={t("Save Settings")} onClick={(e) => {
               e.preventDefault();
               settingsUpdated(settings);
               toggleSettings();
@@ -78,7 +78,7 @@ const SettingsComponent = ({settingsUpdated, defaultSettings}) => {
           </form>
         </div>
       </div>
-      <button className="button button-alt" style={{'marginBottom': '10px'}} onClick={() => toggleSettings()}>Settings</button>
+      <button className="button button-alt" style={{'marginBottom': '10px'}} onClick={() => toggleSettings()}>{t('Settings')}</button>
     </div>
   );
 };

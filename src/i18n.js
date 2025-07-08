@@ -20,6 +20,20 @@ i18n.use(initReactI18next).init({
   interpolation: {
     escapeValue: false, // React already escapes values
   },
+  // Debug mode to see missing translations
+  debug: process.env.NODE_ENV === 'development',
+  
+  // Handle missing translations
+  saveMissing: true,
+  missingKeyHandler: (lng, ns, key, fallbackValue) => {
+    if (process.env.NODE_ENV === 'development') {
+      console.warn(`🌐 Missing translation: "${key}" for language "${lng}"`);
+      // You could also send this to an analytics service
+    }
+  },
+  
+  // Show the key name when translation is missing (useful for development)
+  returnKeyIfNotFound: process.env.NODE_ENV === 'development',
 });
 
 export default i18n;

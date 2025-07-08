@@ -9,6 +9,14 @@
   "clear_all": "全て削除",
   "meaning": "意味",
   "reading": "読み方",
-  "really_clear": "本当にすべてを削除しますか？"
+  "really_clear": "本当にすべてを削除しますか？",
+  "save_to_anki": "Ankiに保存",
+  "Settings": "設定",
+  "Change settings": "設定を変更",
+  "Anki Connect": "Anki Connect",
+  "Anki Connect URL": "Anki Connect URL",
+  "Anki deck": "Ankiデッキ",
+  "Anki model": "Ankiモデル",
+  "Save Settings": "設定を保存"
 }
 
