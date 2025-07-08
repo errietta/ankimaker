@@ -1,14 +1,14 @@
 {
   "files": {
     "main.css": "/ankimaker/static/css/main.22f82b64.css",
-    "main.js": "/ankimaker/static/js/main.f05a2ef8.js",
+    "main.js": "/ankimaker/static/js/main.cfbc10d0.js",
     "service-worker.js": "/ankimaker/service-worker.js",
     "index.html": "/ankimaker/index.html",
     "main.22f82b64.css.map": "/ankimaker/static/css/main.22f82b64.css.map",
-    "main.f05a2ef8.js.map": "/ankimaker/static/js/main.f05a2ef8.js.map"
+    "main.cfbc10d0.js.map": "/ankimaker/static/js/main.cfbc10d0.js.map"
   },
   "entrypoints": [
     "static/css/main.22f82b64.css",
-    "static/js/main.f05a2ef8.js"
+    "static/js/main.cfbc10d0.js"
   ]
 }
