@@ -142,6 +142,9 @@ function Cards() {
     }
 
     sentences.forEach(async (sentence) => {
+      if (!sentence.text || !sentence.meaning || !sentence.reading) {
+        return;
+      }
        const payload = {
         "action": "addNote",
         "version": 6,
