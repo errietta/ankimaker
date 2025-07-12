@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from "react-i18next";
 
-import LogoutButton from './LogoutButton';
-import SettingsComponent from './Settings';
-import './App.css';
-import Papa from 'papaparse';
+import LogoutButton from "./LogoutButton";
+import SettingsComponent from "./Settings";
+import "./App.css";
+import Papa from "papaparse";
 
 function Cards() {
   const { getAccessTokenSilently } = useAuth0();
@@ -13,25 +13,27 @@ function Cards() {
 
   const [sentences, setSentences] = useState(() => {
     // Retrieve sentences from local storage on page load
-    const savedSentences = localStorage.getItem('sentences');
-    return savedSentences ? JSON.parse(savedSentences) : [{ text: '', meaning: '', reading: '' }];
+    const savedSentences = localStorage.getItem("sentences");
+    return savedSentences
+      ? JSON.parse(savedSentences)
+      : [{ text: "", meaning: "", reading: "" }];
   });
 
   // Save sentences to local storage whenever it changes
   useEffect(() => {
-    localStorage.setItem('sentences', JSON.stringify(sentences));
+    localStorage.setItem("sentences", JSON.stringify(sentences));
   }, [sentences]);
 
   const clearAll = () => {
-    if (window.confirm(t('really_clear'))) {
-      setSentences([{ text: '', meaning: '' }]); // Reset to a single empty sentence field
-      localStorage.removeItem('sentences'); // Clear localStorage
+    if (window.confirm(t("really_clear"))) {
+      setSentences([{ text: "", meaning: "" }]); // Reset to a single empty sentence field
+      localStorage.removeItem("sentences"); // Clear localStorage
     }
   };
 
   // Add new sentence
   const addSentence = () => {
-    setSentences([...sentences, { text: '', meaning: '', reading: '' }]);
+    setSentences([...sentences, { text: "", meaning: "", reading: "" }]);
   };
 
   // Handle input change
@@ -48,7 +50,7 @@ function Cards() {
 
     const meaning = await new Promise(async (resolve) => {
       const requestBody = { text: sentence.text };
-      const APIBASE = 'https://ankimaker-backend-88a288e4b6bb.herokuapp.com/';
+      const APIBASE = "https://ankimaker-backend-88a288e4b6bb.herokuapp.com/";
 
       const accessToken = await getAccessTokenSilently({
         authorizationParams: {
@@ -60,9 +62,9 @@ function Cards() {
       console.log({ accessToken });
 
       const response = await fetch(`${APIBASE}meaning`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
           Authorization: `Bearer ${accessToken}`,
         },
         body: JSON.stringify(requestBody),
@@ -89,23 +91,23 @@ function Cards() {
 
     // Create CSV data
     const csvRows = [
-      ['Sentence', 'Reading', 'Meaning'],
+      ["Sentence", "Reading", "Meaning"],
       ...sentences.map((s) => [s.text, s.reading, s.meaning]),
     ];
 
     const csv = Papa.unparse(csvRows);
 
     // Add BOM to the CSV string
-    const csvWithBOM = '\ufeff' + csv + '\n';
+    const csvWithBOM = "\ufeff" + csv + "\n";
 
     // Create Blob with BOM
-    const blob = new Blob([csvWithBOM], { type: 'text/csv;charset=utf-8;' });
+    const blob = new Blob([csvWithBOM], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
 
     // Create download link
-    const link = document.createElement('a');
-    link.setAttribute('href', url);
-    link.setAttribute('download', 'anki-sentences.csv');
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", "anki-sentences.csv");
     document.body.appendChild(link); // Required for FF
     link.click();
     document.body.removeChild(link);
@@ -113,25 +115,27 @@ function Cards() {
 
   const [settings, setSettings] = useState(() => {
     // Retrieve settings from local storage on page load
-    const savedSettings = localStorage.getItem('settings');
-    return savedSettings ? JSON.parse(savedSettings) : {
-      "ankConnect": true,
-      "ankiConnectUrl": "http://localhost:8765",
-      "ankiDeck": "Default",
-      "ankiModel": "Basic",
-    };
+    const savedSettings = localStorage.getItem("settings");
+    return savedSettings
+      ? JSON.parse(savedSettings)
+      : {
+          ankConnect: true,
+          ankiConnectUrl: "http://localhost:8765",
+          ankiDeck: "Default",
+          ankiModel: "Basic",
+        };
   });
 
   // Save settings to local storage whenever it changes
   useEffect(() => {
-    localStorage.setItem('settings', JSON.stringify(settings));
+    localStorage.setItem("settings", JSON.stringify(settings));
   }, [settings]);
 
   const settingsUpdated = useCallback((newSettings) => {
-    setSettings({...newSettings});
+    setSettings({ ...newSettings });
   }, []);
 
-  const [ankiResult, setAnkiResult] = useState('');
+  const [ankiResult, setAnkiResult] = useState("");
 
   const saveToAnkiConnect = async () => {
     // Retrieve meanings for sentences that don't have one yet
@@ -145,34 +149,36 @@ function Cards() {
       if (!sentence.text || !sentence.meaning || !sentence.reading) {
         return;
       }
-       const payload = {
-        "action": "addNote",
-        "version": 6,
-        "params": {
-            "note": {
-                "deckName": settings.ankiDeck,
-                "modelName": "Tango Card Format",
-                "fields": {
-                    "Expression": sentence.text,
-                    "Meaning": sentence.meaning,
-                    "Reading":sentence.reading,
-                },
-                "options": {"allowDuplicate": false},
-                "tags": ["anki-maker"],
-            }
+      const payload = {
+        action: "addNote",
+        version: 6,
+        params: {
+          note: {
+            deckName: settings.ankiDeck,
+            modelName: "Tango Card Format",
+            fields: {
+              Expression: sentence.text,
+              Meaning: sentence.meaning,
+              Reading: sentence.reading,
+            },
+            options: { allowDuplicate: false },
+            tags: ["anki-maker"],
+          },
         },
-      }
+      };
 
       const response = await fetch(settings.ankiConnectUrl, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(payload),
       });
 
       if (!response.ok) {
-        setAnkiResult({error: `Error saving to Anki Connect: ${response.statusText}`});
+        setAnkiResult({
+          error: `Error saving to Anki Connect: ${response.statusText}`,
+        });
         return;
       }
 
@@ -184,44 +190,60 @@ function Cards() {
 
   return (
     <div className="app">
-      <h1>{t('welcome')}</h1>
+      <h1>{t("welcome")}</h1>
 
-
-      <SettingsComponent settingsUpdated={settingsUpdated} defaultSettings={settings} />
+      <SettingsComponent
+        settingsUpdated={settingsUpdated}
+        defaultSettings={settings}
+      />
 
       {sentences.map((sentence, index) => (
         <div key={index} className="sentence-container">
           <textarea
             value={sentence.text}
             onChange={(event) => handleSentenceChange(index, event)}
-            placeholder={t('add_sentence')}
+            placeholder={t("add_sentence")}
             rows="2"
             cols="30"
           ></textarea>
-          <button onClick={() => getMeaning(index)}>{t('get_meaning')}</button>
-          {sentence.meaning && <p>{t('meaning')}: {sentence.meaning}</p>}
-          {sentence.reading && <p>{t('reading')}: {sentence.reading}</p>}
+          <button onClick={() => getMeaning(index)}>{t("get_meaning")}</button>
+          {sentence.meaning && (
+            <p>
+              {t("meaning")}: {sentence.meaning}
+            </p>
+          )}
+          {sentence.reading && (
+            <p>
+              {t("reading")}: {sentence.reading}
+            </p>
+          )}
         </div>
       ))}
 
-
-      <button className="button-add" onClick={addSentence}>{t('add_sentence')}</button>
+      <button className="button-add" onClick={addSentence}>
+        {t("add_sentence")}
+      </button>
       {settings.ankConnect && (
-        <button className="button-save" onClick={saveToAnkiConnect}>{t('save_to_anki')}</button>
+        <button className="button-save" onClick={saveToAnkiConnect}>
+          {t("save_to_anki")}
+        </button>
       )}
 
-      {
-        ankiResult && (
-          <div className="result">
-          {ankiResult.error && (<p>Error: {ankiResult.error}</p>)}
-          {ankiResult.result && (<p>Success: {ankiResult.result}</p>)}
-          </div>
-        )
-      }
+      {ankiResult && (
+        <div className="result">
+          {ankiResult.error && <p>Error: {ankiResult.error}</p>}
+          {ankiResult.result && <p>Success: {ankiResult.result}</p>}
+        </div>
+      )}
 
-      <button className="button-download" onClick={downloadCSV}>{t('get_csv')}</button>
-      <button className="button-danger" onClick={clearAll}>{t('clear_all')}</button>
-      <br /><br />
+      <button className="button-download" onClick={downloadCSV}>
+        {t("get_csv")}
+      </button>
+      <button className="button-danger" onClick={clearAll}>
+        {t("clear_all")}
+      </button>
+      <br />
+      <br />
       <div>
         <LogoutButton />
       </div>
