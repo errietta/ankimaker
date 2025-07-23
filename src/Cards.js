@@ -74,11 +74,13 @@ function Cards() {
       resolve(responseData);
     });
 
-    const newSentences = [...sentences];
-    newSentences[index].reading = meaning.reply.reading;
-    newSentences[index].meaning = meaning.reply.meaning;
-    newSentences[index].text = meaning.reply.sentence;
-    setSentences(newSentences);
+    setSentences(currentSentences => {
+      const newSentences = [...currentSentences];
+      newSentences[index].reading = meaning.reply.reading;
+      newSentences[index].meaning = meaning.reply.meaning;
+      newSentences[index].text = meaning.reply.sentence;
+      return newSentences;
+    });
   };
 
   const downloadCSV = async () => {
@@ -135,7 +137,7 @@ function Cards() {
     setSettings({ ...newSettings });
   }, []);
 
-  const [ankiResult, setAnkiResult] = useState("");
+  const [ankiResults, setAnkiResults] = useState("");
 
   const saveToAnkiConnect = async () => {
     // Retrieve meanings for sentences that don't have one yet
@@ -145,46 +147,60 @@ function Cards() {
       }
     }
 
-    sentences.forEach(async (sentence) => {
-      if (!sentence.text || !sentence.meaning || !sentence.reading) {
-        return;
-      }
-      const payload = {
-        action: "addNote",
-        version: 6,
-        params: {
-          note: {
-            deckName: settings.ankiDeck,
-            modelName: "Tango Card Format",
-            fields: {
-              Expression: sentence.text,
-              Meaning: sentence.meaning,
-              Reading: sentence.reading,
+    setSentences(currentSentences => {
+      const processSentences = async () => {
+        const results = [];
+
+        for (const sentence of currentSentences) {
+          if (!sentence.text || !sentence.meaning || !sentence.reading) {
+            continue;
+          }
+
+          const payload = {
+            action: "addNote",
+            version: 6,
+            params: {
+              note: {
+                deckName: settings.ankiDeck,
+                modelName: "Tango Card Format",
+                fields: {
+                  Expression: sentence.text,
+                  Meaning: sentence.meaning,
+                  Reading: sentence.reading,
+                },
+                options: { allowDuplicate: false },
+                tags: ["anki-maker"],
+              },
             },
-            options: { allowDuplicate: false },
-            tags: ["anki-maker"],
-          },
-        },
+          };
+
+          try {
+            const response = await fetch(settings.ankiConnectUrl, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(payload),
+            });
+
+            if (!response.ok) {
+              results.push({ error: `Error saving "${sentence.text}": ${response.statusText}` });
+              continue;
+            }
+
+            const data = await response.json();
+            console.log(data);
+            results.push({ success: `Saved "${sentence.text}" successfully`, data });
+          } catch (error) {
+            results.push({ error: `Error saving "${sentence.text}": ${error.message}` });
+          }
+        }
+
+        setAnkiResults({ results });
       };
 
-      const response = await fetch(settings.ankiConnectUrl, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
-
-      if (!response.ok) {
-        setAnkiResult({
-          error: `Error saving to Anki Connect: ${response.statusText}`,
-        });
-        return;
-      }
-
-      const data = await response.json();
-      console.log(data);
-      setAnkiResult(data);
+      processSentences();
+      return currentSentences;
     });
   };
 
@@ -229,10 +245,20 @@ function Cards() {
         </button>
       )}
 
-      {ankiResult && (
+      {ankiResults && (
         <div className="result">
-          {ankiResult.error && <p>Error: {ankiResult.error}</p>}
-          {ankiResult.result && <p>Success: {ankiResult.result}</p>}
+          {ankiResults.error && <p>Error: {ankiResults.error}</p>}
+          {ankiResults.result && <p>Success: {ankiResults.result}</p>}
+          {ankiResults.results && (
+            <div>
+              {ankiResults.results.map((result, index) => (
+                <p key={index}>
+                  {result.error && <span style={{color: 'red'}}>❌ {result.error}</span>}
+                  {result.success && <span style={{color: 'green'}}>✅ {result.success}</span>}
+                </p>
+              ))}
+            </div>
+          )}
         </div>
       )}
 
