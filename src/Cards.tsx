@@ -32,6 +32,7 @@ function Cards() {
     if (window.confirm(t("really_clear"))) {
       setSentences([{ text: "", meaning: "", reading: "" }]); // Reset to a single empty sentence field
       localStorage.removeItem("sentences"); // Clear localStorage
+      setAnkiResults([]); // Clear Anki results
     }
   };
 
@@ -41,14 +42,14 @@ function Cards() {
   };
 
   // Handle input change
-  const handleSentenceChange = (index, event) => {
+  const handleSentenceChange = (index: number, event: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newSentences = [...sentences];
     newSentences[index].text = event.target.value;
     setSentences(newSentences);
   };
 
   // Fetch meaning from the backend API (Mocked as setTimeout for now)
-  const getMeaning = async (index) => {
+  const getMeaning = async (index: number) => {
     const sentence = sentences[index];
     if (!sentence.text) return;
 
@@ -108,7 +109,7 @@ function Cards() {
     localStorage.setItem("settings", JSON.stringify(settings));
   }, [settings]);
 
-  const settingsUpdated = useCallback((newSettings) => {
+  const settingsUpdated = useCallback((newSettings: any) => {
     setSettings({ ...newSettings });
   }, []);
 

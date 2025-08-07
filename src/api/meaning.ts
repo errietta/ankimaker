@@ -1,3 +1,5 @@
+import { SentenceCard } from "../types/Cards";
+
 type SentenceMeaningAPIResponse = {
   reply: {
     sentence: string;
@@ -5,8 +7,6 @@ type SentenceMeaningAPIResponse = {
     reading: string;
   };
 };
-
-import { SentenceCard } from "../types/Cards";
 
 export class ApiClient {
   private accessToken: string;

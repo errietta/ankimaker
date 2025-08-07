@@ -59,7 +59,7 @@ export const addSentencesToAnki = async (
       });
     } catch (error) {
       results.push({
-        error: `Error saving "${sentence.text}": ${error.message}`,
+        error: `Error saving "${sentence.text}"`,
       });
     }
   }
