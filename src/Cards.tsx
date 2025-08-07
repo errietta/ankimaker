@@ -1,17 +1,21 @@
-import React, { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useTranslation } from "react-i18next";
 
 import LogoutButton from "./LogoutButton";
 import SettingsComponent from "./Settings";
 import "./App.css";
-import Papa from "papaparse";
+import { SentenceCard } from "./types/Cards";
+import { ApiClient } from "./api/meaning";
+import { addSentencesToAnki } from "./api/ankiConnect";
+import { AnkiConnectResult } from "./types/AnkiConnect";
+import { createCSV } from "./service/csv";
 
 function Cards() {
   const { getAccessTokenSilently } = useAuth0();
   const { t } = useTranslation();
 
-  const [sentences, setSentences] = useState(() => {
+  const [sentences, setSentences] = useState<SentenceCard[]>(() => {
     // Retrieve sentences from local storage on page load
     const savedSentences = localStorage.getItem("sentences");
     return savedSentences
@@ -26,7 +30,7 @@ function Cards() {
 
   const clearAll = () => {
     if (window.confirm(t("really_clear"))) {
-      setSentences([{ text: "", meaning: "" }]); // Reset to a single empty sentence field
+      setSentences([{ text: "", meaning: "", reading: "" }]); // Reset to a single empty sentence field
       localStorage.removeItem("sentences"); // Clear localStorage
     }
   };
@@ -48,33 +52,19 @@ function Cards() {
     const sentence = sentences[index];
     if (!sentence.text) return;
 
-    const meaning = await new Promise(async (resolve) => {
-      const requestBody = { text: sentence.text };
-      const APIBASE = "https://ankimaker-backend-88a288e4b6bb.herokuapp.com/";
-
-      const accessToken = await getAccessTokenSilently({
-        authorizationParams: {
-          audience: `https://card.backend/`,
-          scope: "read:current_user",
-        },
-      });
-
-      console.log({ accessToken });
-
-      const response = await fetch(`${APIBASE}meaning`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
-        },
-        body: JSON.stringify(requestBody),
-      });
-      const responseData = await response.json();
-      console.log(responseData);
-      resolve(responseData);
+    const accessToken = await getAccessTokenSilently({
+      authorizationParams: {
+        audience: `https://card.backend/`,
+        scope: "read:current_user",
+      },
     });
 
-    setSentences(currentSentences => {
+    console.log({ accessToken });
+
+    const client = new ApiClient(accessToken);
+    const meaning = await client.getSentenceMeaning(sentence);
+
+    setSentences((currentSentences) => {
       const newSentences = [...currentSentences];
       newSentences[index].reading = meaning.reply.reading;
       newSentences[index].meaning = meaning.reply.meaning;
@@ -91,28 +81,13 @@ function Cards() {
       }
     }
 
-    // Create CSV data
-    const csvRows = [
-      ["Sentence", "Reading", "Meaning"],
-      ...sentences.map((s) => [s.text, s.reading, s.meaning]),
-    ];
-
-    const csv = Papa.unparse(csvRows);
-
-    // Add BOM to the CSV string
-    const csvWithBOM = "\ufeff" + csv + "\n";
+    const csvWithBOM = createCSV(sentences);
 
     // Create Blob with BOM
     const blob = new Blob([csvWithBOM], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
 
-    // Create download link
-    const link = document.createElement("a");
-    link.setAttribute("href", url);
-    link.setAttribute("download", "anki-sentences.csv");
-    document.body.appendChild(link); // Required for FF
-    link.click();
-    document.body.removeChild(link);
+    forceDownload(url);
   };
 
   const [settings, setSettings] = useState(() => {
@@ -137,7 +112,7 @@ function Cards() {
     setSettings({ ...newSettings });
   }, []);
 
-  const [ankiResults, setAnkiResults] = useState("");
+  const [ankiResults, setAnkiResults] = useState<AnkiConnectResult[]>([]);
 
   const saveToAnkiConnect = async () => {
     // Retrieve meanings for sentences that don't have one yet
@@ -147,56 +122,14 @@ function Cards() {
       }
     }
 
-    setSentences(currentSentences => {
+    setSentences((currentSentences) => {
       const processSentences = async () => {
-        const results = [];
+        const results: AnkiConnectResult[] = await addSentencesToAnki(
+          currentSentences,
+          settings
+        );
 
-        for (const sentence of currentSentences) {
-          if (!sentence.text || !sentence.meaning || !sentence.reading) {
-            continue;
-          }
-
-          const payload = {
-            action: "addNote",
-            version: 6,
-            params: {
-              note: {
-                deckName: settings.ankiDeck,
-                modelName: "Tango Card Format",
-                fields: {
-                  Expression: sentence.text,
-                  Meaning: sentence.meaning,
-                  Reading: sentence.reading,
-                },
-                options: { allowDuplicate: false },
-                tags: ["anki-maker"],
-              },
-            },
-          };
-
-          try {
-            const response = await fetch(settings.ankiConnectUrl, {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify(payload),
-            });
-
-            if (!response.ok) {
-              results.push({ error: `Error saving "${sentence.text}": ${response.statusText}` });
-              continue;
-            }
-
-            const data = await response.json();
-            console.log(data);
-            results.push({ success: `Saved "${sentence.text}" successfully`, data });
-          } catch (error) {
-            results.push({ error: `Error saving "${sentence.text}": ${error.message}` });
-          }
-        }
-
-        setAnkiResults({ results });
+        setAnkiResults(results);
       };
 
       processSentences();
@@ -219,8 +152,8 @@ function Cards() {
             value={sentence.text}
             onChange={(event) => handleSentenceChange(index, event)}
             placeholder={t("add_sentence")}
-            rows="2"
-            cols="30"
+            rows={2}
+            cols={30}
           ></textarea>
           <button onClick={() => getMeaning(index)}>{t("get_meaning")}</button>
           {sentence.meaning && (
@@ -247,14 +180,16 @@ function Cards() {
 
       {ankiResults && (
         <div className="result">
-          {ankiResults.error && <p>Error: {ankiResults.error}</p>}
-          {ankiResults.result && <p>Success: {ankiResults.result}</p>}
-          {ankiResults.results && (
+          {ankiResults && (
             <div>
-              {ankiResults.results.map((result, index) => (
+              {ankiResults.map((result, index) => (
                 <p key={index}>
-                  {result.error && <span style={{color: 'red'}}>❌ {result.error}</span>}
-                  {result.success && <span style={{color: 'green'}}>✅ {result.success}</span>}
+                  {result.error && (
+                    <span style={{ color: "red" }}>❌ {result.error}</span>
+                  )}
+                  {result.success && (
+                    <span style={{ color: "green" }}>✅ {result.success}</span>
+                  )}
                 </p>
               ))}
             </div>
@@ -275,6 +210,17 @@ function Cards() {
       </div>
     </div>
   );
+
+  
+
+  function forceDownload(url: string) {
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", "anki-sentences.csv");
+    document.body.appendChild(link); // Required for FF
+    link.click();
+    document.body.removeChild(link);
+  }
 }
 
 export default Cards;
