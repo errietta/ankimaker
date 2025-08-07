@@ -1,8 +1,9 @@
 import { SentenceCard } from "../types/Cards";
-import {AnkiConnectResult} from "../types/AnkiConnect";
+import { AnkiConnectResult } from "../types/AnkiConnect";
+import { AppSettings } from "../types/AppSettings";
 
 
-function constructAnkiPayload(settings: any, sentence: SentenceCard) {
+function constructAnkiPayload(settings: AppSettings, sentence: SentenceCard) {
   return {
     action: "addNote",
     version: 6,
@@ -24,7 +25,7 @@ function constructAnkiPayload(settings: any, sentence: SentenceCard) {
 
 export const addSentencesToAnki = async (
   sentences: SentenceCard[],
-  settings: any
+  settings: AppSettings
 ): Promise<AnkiConnectResult[]> => {
   const results: AnkiConnectResult[] = [];
 

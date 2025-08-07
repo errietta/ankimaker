@@ -6,6 +6,7 @@ import LogoutButton from "./LogoutButton";
 import SettingsComponent from "./Settings";
 import "./App.css";
 import { SentenceCard } from "./types/Cards";
+import { AppSettings } from "./types/AppSettings";
 import { ApiClient } from "./api/meaning";
 import { addSentencesToAnki } from "./api/ankiConnect";
 import { AnkiConnectResult } from "./types/AnkiConnect";
@@ -91,7 +92,7 @@ function Cards() {
     forceDownload(url);
   };
 
-  const [settings, setSettings] = useState(() => {
+  const [settings, setSettings] = useState<AppSettings>(() => {
     // Retrieve settings from local storage on page load
     const savedSettings = localStorage.getItem("settings");
     return savedSettings
@@ -109,7 +110,7 @@ function Cards() {
     localStorage.setItem("settings", JSON.stringify(settings));
   }, [settings]);
 
-  const settingsUpdated = useCallback((newSettings: any) => {
+  const settingsUpdated = useCallback((newSettings: AppSettings) => {
     setSettings({ ...newSettings });
   }, []);
 

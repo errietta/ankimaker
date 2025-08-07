@@ -1,12 +1,16 @@
-
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { AppSettings } from "./types/AppSettings";
 
-const SettingsComponent = ({settingsUpdated, defaultSettings}) => {
+interface SettingsComponentProps {
+  settingsUpdated: (settings: AppSettings) => void;
+  defaultSettings: AppSettings;
+}
+
+const SettingsComponent: React.FC<SettingsComponentProps> = ({ settingsUpdated, defaultSettings }) => {
   const { t } = useTranslation();
   const [showSettings, setShowSettings] = React.useState(false);
-  const [settings, setSettings] = React.useState(defaultSettings);
-
+  const [settings, setSettings] = React.useState<AppSettings>(defaultSettings);
 
   const toggleSettings = () => {
     setShowSettings(!showSettings);
@@ -16,15 +20,14 @@ const SettingsComponent = ({settingsUpdated, defaultSettings}) => {
     settingsUpdated(settings);
   }, [settings, settingsUpdated]);
 
-
   return (
     <div>
-      <div style={{ display: showSettings ? 'block' : 'none'}} class="modal">
-        <div class="modal-content">
-          <span class="close" onClick={() => toggleSettings()}>&times;</span>
+      <div style={{ display: showSettings ? 'block' : 'none'}} className="modal">
+        <div className="modal-content">
+          <span className="close" onClick={() => toggleSettings()}>&times;</span>
           <h2>{t('Settings')}</h2>
           <p>{t('Change settings')}</p>
-          <form class="form">
+          <form className="form">
             <label>
               {t('Anki Connect')}
               <input type="checkbox"
@@ -78,10 +81,9 @@ const SettingsComponent = ({settingsUpdated, defaultSettings}) => {
           </form>
         </div>
       </div>
-      <button className="button button-alt" style={{'marginBottom': '10px'}} onClick={() => toggleSettings()}>{t('Settings')}</button>
+      <button className="button button-alt" style={{ marginBottom: '10px' }} onClick={() => toggleSettings()}>{t('Settings')}</button>
     </div>
   );
 };
 
 export default SettingsComponent;
-
