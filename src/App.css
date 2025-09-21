@@ -1,3 +1,41 @@
+.dark-mode button {
+  background-color: #2563eb;
+  color: #e0e0e0;
+}
+.dark-mode button:hover {
+  background-color: #1e40af;
+}
+.dark-mode .button-add {
+  background-color: #059669;
+}
+.dark-mode .button-add:hover {
+  background-color: #065f46;
+}
+.dark-mode .button-danger {
+  background-color: #dc2626;
+}
+.dark-mode .button-danger:hover {
+  background-color: #991b1b;
+}
+.dark-mode .button-download {
+  background-color: #d97706;
+}
+.dark-mode .button-download:hover {
+  background-color: #92400e;
+}
+.dark-mode .button-alt {
+  background-color: #374151;
+}
+.dark-mode .button-alt:hover {
+  background-color: #111827;
+}
+.dark-mode .logout-button {
+  background-color: #991b1b;
+  color: #e0e0e0;
+}
+.dark-mode .logout-button:hover {
+  background-color: #7f1d1d;
+}
 /* Global reset for consistent box-sizing */
 *,
 *::before,
