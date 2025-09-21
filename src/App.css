@@ -1,40 +1,43 @@
+
 .dark-mode button {
-  background-color: #2563eb;
-  color: #e0e0e0;
+  background-color: #3a415a;
+  color: #f3f3f3;
 }
 .dark-mode button:hover {
-  background-color: #1e40af;
+  background-color: #586380;
 }
 .dark-mode .button-add {
-  background-color: #059669;
+  background-color: #1e7f5c;
 }
 .dark-mode .button-add:hover {
-  background-color: #065f46;
+  background-color: #2bb673;
 }
 .dark-mode .button-danger {
-  background-color: #dc2626;
+  background-color: #b91c1c;
 }
 .dark-mode .button-danger:hover {
-  background-color: #991b1b;
+  background-color: #f87171;
 }
 .dark-mode .button-download {
-  background-color: #d97706;
+  background-color: #b45309;
 }
 .dark-mode .button-download:hover {
-  background-color: #92400e;
+  background-color: #fde68a;
+  color: #23272f;
 }
 .dark-mode .button-alt {
   background-color: #374151;
 }
 .dark-mode .button-alt:hover {
-  background-color: #111827;
+  background-color: #6b7280;
 }
 .dark-mode .logout-button {
-  background-color: #991b1b;
-  color: #e0e0e0;
+  background-color: #7f1d1d;
+  color: #f3f3f3;
 }
 .dark-mode .logout-button:hover {
-  background-color: #7f1d1d;
+  background-color: #f87171;
+  color: #23272f;
 }
 /* Global reset for consistent box-sizing */
 *,
