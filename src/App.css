@@ -6,6 +6,7 @@
 }
 
 /* General styling */
+
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background-color: #f0f2f5;
@@ -18,6 +19,43 @@ body {
   color: #333;
   padding: 10px; /* Add padding to prevent content from touching screen edges */
   overflow-x: hidden; /* Prevent horizontal overflow */
+}
+
+body.dark-mode {
+  background-color: #181a1b;
+  color: #e0e0e0;
+}
+
+.dark-mode .app {
+  background-color: #23272f;
+  color: #e0e0e0;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+}
+
+.dark-mode h1 {
+  color: #e0e0e0;
+}
+
+.dark-mode textarea {
+  background-color: #23272f;
+  color: #e0e0e0;
+  border: 1px solid #444;
+}
+
+.dark-mode .result {
+  background-color: #23272f;
+  color: #e0e0e0;
+  border-color: #444;
+}
+
+.dark-mode .modal-content {
+  background-color: #23272f;
+  color: #e0e0e0;
+}
+
+.dark-mode button,
+.dark-mode .logout-button {
+  color: #e0e0e0;
 }
 
 .app {
