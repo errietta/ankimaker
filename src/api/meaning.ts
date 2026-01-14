@@ -16,9 +16,10 @@ export class ApiClient {
   }
 
   async getSentenceMeaning(
-    sentence: SentenceCard
+    sentence: SentenceCard,
+    language: string="jp-JP"
   ): Promise<SentenceMeaningAPIResponse> {
-    const requestBody = { text: sentence.text };
+    const requestBody = { text: sentence.text, language, };
     const APIBASE = "https://ankimaker-backend-88a288e4b6bb.herokuapp.com/";
 
     const response = await fetch(`${APIBASE}meaning`, {

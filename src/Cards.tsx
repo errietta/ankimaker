@@ -64,7 +64,7 @@ function Cards() {
     console.log({ accessToken });
 
     const client = new ApiClient(accessToken);
-    const meaning = await client.getSentenceMeaning(sentence);
+    const meaning = await client.getSentenceMeaning(sentence, translationLanguage);
 
     setSentences((currentSentences) => {
       const newSentences = [...currentSentences];
@@ -114,6 +114,16 @@ function Cards() {
     setSettings({ ...newSettings });
   }, []);
 
+  const [translationLanguage, setTranslationLanguage] = useState<string>(() => {
+    const saved = localStorage.getItem("translationLanguage");
+    return saved || "jp-JP";
+  });
+
+  // Save translation language to localStorage
+  useEffect(() => {
+    localStorage.setItem("translationLanguage", translationLanguage);
+  }, [translationLanguage]);
+
   const [ankiResults, setAnkiResults] = useState<AnkiConnectResult[]>([]);
 
   const saveToAnkiConnect = async () => {
@@ -128,7 +138,8 @@ function Cards() {
       const processSentences = async () => {
         const results: AnkiConnectResult[] = await addSentencesToAnki(
           currentSentences,
-          settings
+          settings,
+          translationLanguage
         );
 
         setAnkiResults(results);
@@ -147,6 +158,18 @@ function Cards() {
         settingsUpdated={settingsUpdated}
         defaultSettings={settings}
       />
+
+      <div className="language-section">
+        <h2>{t("source_language")}</h2>
+        <select 
+          value={translationLanguage} 
+          onChange={(e) => setTranslationLanguage(e.target.value)}
+          className="language-dropdown"
+        >
+          <option value="jp-JP">{t("japanese")}</option>
+          <option value="zh-CN">{t("chinese")}</option>
+        </select>
+      </div>
 
       {sentences.map((sentence, index) => (
         <div key={index} className="sentence-container">

@@ -3,14 +3,14 @@ import { AnkiConnectResult } from "../types/AnkiConnect";
 import { AppSettings } from "../types/AppSettings";
 
 
-function constructAnkiPayload(settings: AppSettings, sentence: SentenceCard) {
+function constructAnkiPayload(settings: AppSettings, sentence: SentenceCard, translationLanguage: string="jp-JP") {
   return {
     action: "addNote",
     version: 6,
     params: {
       note: {
         deckName: settings.ankiDeck,
-        modelName: "Tango Card Format",
+        modelName: (translationLanguage === "jp-JP") ? "Tango Card Format" : "Chinese deck",
         fields: {
           Expression: sentence.text,
           Meaning: sentence.meaning,
@@ -25,7 +25,8 @@ function constructAnkiPayload(settings: AppSettings, sentence: SentenceCard) {
 
 export const addSentencesToAnki = async (
   sentences: SentenceCard[],
-  settings: AppSettings
+  settings: AppSettings,
+  translationLanguage: string,
 ): Promise<AnkiConnectResult[]> => {
   const results: AnkiConnectResult[] = [];
 
@@ -34,7 +35,7 @@ export const addSentencesToAnki = async (
       continue;
     }
 
-    const payload = constructAnkiPayload(settings, sentence);
+    const payload = constructAnkiPayload(settings, sentence, translationLanguage);
 
     try {
       const response = await fetch(settings.ankiConnectUrl, {

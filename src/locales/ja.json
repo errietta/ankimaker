@@ -17,6 +17,9 @@
   "Anki Connect URL": "Anki Connect URL",
   "Anki deck": "Ankiデッキ",
   "Anki model": "Ankiモデル",
-  "Save Settings": "設定を保存"
+  "Save Settings": "設定を保存",
+  "source_language": "入力言語",
+  "japanese": "日本語",
+  "chinese": "中国語"
 }
 

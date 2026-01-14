@@ -58,20 +58,6 @@ const SettingsComponent: React.FC<SettingsComponentProps> = ({ settingsUpdated, 
                 }}
               />
             </label>
-            <label>
-              {t('Anki model')}
-              <select onChange={(e) => {
-                const newSettings = { ...settings, ankiModel: e.target.value };
-                setSettings(newSettings);
-              }} value={settings.ankiModel}>
-                <option value="Basic">Basic</option>
-                <option value="Cloze">Cloze</option>
-                <option value="Basic (and reverse)">Basic (and reverse)</option>
-                <option value="Basic (optional reversed card)">Basic (optional reversed card)</option>
-                <option value="Basic (type in the answer)">Basic (type in the answer)</option>
-                <option value="Tango Card Format">Tango Card Format</option>
-              </select>
-            </label>
 
             <input type="button" value={t("Save Settings")} onClick={(e) => {
               e.preventDefault();

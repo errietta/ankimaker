@@ -314,3 +314,42 @@ button:active {
   word-wrap: break-word; /* Allow long words to break and wrap onto the next line */
   overflow-x: auto; /* Add horizontal scroll if content overflows */
 }
+
+/* Language Selection Styling */
+.language-section {
+  margin-bottom: 25px;
+  padding: 20px;
+  background-color: #f8fafc;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+}
+
+.language-section h2 {
+  font-size: 18px;
+  margin-bottom: 12px;
+  color: #374151;
+  font-weight: 600;
+}
+
+.language-dropdown {
+  width: 100%;
+  max-width: 250px;
+  padding: 10px 12px;
+  font-size: 16px;
+  border: 2px solid #e2e8f0;
+  border-radius: 6px;
+  background-color: #ffffff;
+  color: #374151;
+  outline: none;
+  transition: border-color 0.3s ease;
+  cursor: pointer;
+}
+
+.language-dropdown:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.language-dropdown:hover {
+  border-color: #cbd5e1;
+}
