@@ -23,7 +23,7 @@
   "chinese": "中国語",
   "tab_text": "テキスト",
   "tab_photo": "OCR写真",
-  "drag_to_select": "ドラッグして範囲を選択。複数の範囲を選択して行をまたいだテキストを取得できます。",
+  "drag_to_select": "読む順番にドラッグして範囲を選択。描いた順番に積み重ねて送信されます。",
   "remove_last": "最後の範囲を削除",
   "clear_regions": "全範囲を削除",
   "crop_and_submit": "意味を取得",

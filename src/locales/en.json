@@ -23,7 +23,7 @@
   "chinese": "Chinese",
   "tab_text": "Text",
   "tab_photo": "OCR Photo",
-  "drag_to_select": "Drag to select regions. Draw multiple regions to capture text across lines.",
+  "drag_to_select": "Drag to select regions in reading order. They will be stacked in the order drawn.",
   "remove_last": "Remove last region",
   "clear_regions": "Clear all regions",
   "crop_and_submit": "Get Meaning",

@@ -84,9 +84,15 @@ function PhotoOCR({ translationLanguage, onCardAdded }: PhotoOCRProps) {
 
   const getCoords = (e: React.MouseEvent | React.TouchEvent): { x: number; y: number } => {
     const canvas = canvasRef.current!;
-    const rect = canvas.getBoundingClientRect();
+    const displayRect = canvas.getBoundingClientRect();
     const src = "touches" in e ? e.touches[0] : (e as React.MouseEvent);
-    return { x: src.clientX - rect.left, y: src.clientY - rect.top };
+    const cssX = src.clientX - displayRect.left;
+    const cssY = src.clientY - displayRect.top;
+    // Convert from CSS display pixels to canvas pixel space (differs when max-width scales canvas down)
+    return {
+      x: cssX * (canvas.width / displayRect.width),
+      y: cssY * (canvas.height / displayRect.height),
+    };
   };
 
   const onPointerDown = (e: React.MouseEvent | React.TouchEvent) => {
@@ -126,12 +132,16 @@ function PhotoOCR({ translationLanguage, onCardAdded }: PhotoOCRProps) {
     const scaleX = img.naturalWidth / canvas.width;
     const scaleY = img.naturalHeight / canvas.height;
 
-    const sorted = [...rects]
-      .map((r) => ({ x: r.x * scaleX, y: r.y * scaleY, w: r.w * scaleX, h: r.h * scaleY }))
-      .sort((a, b) => a.y - b.y);
+    // Use draw order (the numbered labels), not Y position — users draw in reading order
+    const scaled = rects.map((r) => ({
+      x: r.x * scaleX,
+      y: r.y * scaleY,
+      w: r.w * scaleX,
+      h: r.h * scaleY,
+    }));
 
-    const totalWidth = Math.max(...sorted.map((r) => r.w));
-    const totalHeight = sorted.reduce((sum, r) => sum + r.h, 0);
+    const totalWidth = Math.max(...scaled.map((r) => r.w));
+    const totalHeight = scaled.reduce((sum, r) => sum + r.h, 0);
 
     const out = document.createElement("canvas");
     out.width = totalWidth;
@@ -141,7 +151,7 @@ function PhotoOCR({ translationLanguage, onCardAdded }: PhotoOCRProps) {
     ctx.fillRect(0, 0, totalWidth, totalHeight);
 
     let offsetY = 0;
-    for (const r of sorted) {
+    for (const r of scaled) {
       ctx.drawImage(img, r.x, r.y, r.w, r.h, 0, offsetY, r.w, r.h);
       offsetY += r.h;
     }
