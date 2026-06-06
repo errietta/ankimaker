@@ -138,15 +138,25 @@ function WritingCard({ language, settings }: WritingCardProps) {
   const { t } = useTranslation();
   const isJP = language === "jp-JP";
 
+  const deckKey = `writingDeck-${language}`;
+
   const [word, setWord] = useState("");
   const [reading, setReading] = useState("");
   const [sentence, setSentence] = useState("");
   const [level, setLevel] = useState("");
   const [meaning, setMeaning] = useState("");
+  const [deck, setDeck] = useState<string>(
+    () => localStorage.getItem(deckKey) ?? settings.ankiDeck
+  );
   const [isFetchingMeaning, setIsFetchingMeaning] = useState(false);
   const [diagramBase64, setDiagramBase64] = useState<string | null>(null);
   const [isGeneratingDiagram, setIsGeneratingDiagram] = useState(false);
   const [saveResult, setSaveResult] = useState<AnkiConnectResult | null>(null);
+
+  const handleDeckChange = (value: string) => {
+    setDeck(value);
+    localStorage.setItem(deckKey, value);
+  };
 
   const sentenceFront = word && reading ? sentence.replace(word, reading) : sentence;
 
@@ -198,7 +208,7 @@ function WritingCard({ language, settings }: WritingCardProps) {
 
   const handleSaveToAnki = async () => {
     const data: WritingCardData = { word, reading, sentence, level, meaning, diagramBase64 };
-    const result = await addWritingCardToAnki(data, settings, language);
+    const result = await addWritingCardToAnki(data, { ...settings, ankiDeck: deck }, language);
     setSaveResult(result);
   };
 
@@ -294,13 +304,24 @@ function WritingCard({ language, settings }: WritingCardProps) {
       </div>
 
       {settings.ankConnect && (
-        <button
-          className="button-save"
-          onClick={handleSaveToAnki}
-          disabled={!word || !reading || !sentence || !meaning}
-        >
-          {t("save_to_anki")}
-        </button>
+        <>
+          <div className="writing-card-field">
+            <label className="writing-card-label">{t("Anki deck")}</label>
+            <input
+              type="text"
+              value={deck}
+              onChange={(e) => handleDeckChange(e.target.value)}
+              className="writing-card-input"
+            />
+          </div>
+          <button
+            className="button-save"
+            onClick={handleSaveToAnki}
+            disabled={!word || !reading || !sentence || !meaning}
+          >
+            {t("save_to_anki")}
+          </button>
+        </>
       )}
 
       {saveResult && (
