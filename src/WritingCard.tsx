@@ -100,7 +100,7 @@ async function generateCNDiagram(word: string): Promise<string | null> {
       const charData = await res.json();
 
       const innerSize = charSize - padding * 2;
-      // hanzi-writer-data uses bottom-left origin; flip Y with transform
+      // hanzi-writer-data uses bottom-left origin; flip Y with transform on path group
       const paths = (charData.strokes as string[])
         .map(
           (d, i) =>
@@ -108,7 +108,19 @@ async function generateCNDiagram(word: string): Promise<string | null> {
         )
         .join("");
 
-      const svgStr = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="${innerSize}" height="${innerSize}"><g transform="scale(1,-1) translate(0,-900)">${paths}</g></svg>`;
+      // Place stroke order numbers at the start of each stroke's median.
+      // Medians are in stroke-space coords (y increases upward); convert to SVG space: svgY = 900 - strokeY.
+      // Text is placed outside the flipped <g> so it reads correctly.
+      const numbers = (charData.medians as number[][][])
+        .map((median, i) => {
+          if (!median || median.length === 0) return "";
+          const [mx, my] = median[0];
+          const svgY = 900 - my;
+          return `<text x="${mx}" y="${svgY}" font-size="80" fill="white" stroke="#222" stroke-width="18" paint-order="stroke" text-anchor="middle" dominant-baseline="middle" font-family="sans-serif" font-weight="bold">${i + 1}</text>`;
+        })
+        .join("");
+
+      const svgStr = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="${innerSize}" height="${innerSize}"><g transform="scale(1,-1) translate(0,-900)">${paths}</g>${numbers}</svg>`;
       const blob = new Blob([svgStr], { type: "image/svg+xml" });
       const blobUrl = URL.createObjectURL(blob);
 
