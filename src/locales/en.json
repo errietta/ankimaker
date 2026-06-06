@@ -30,6 +30,20 @@
   "ocr_loading": "Processing image...",
   "ocr_extracted_text": "Extracted text",
   "add_to_card_list": "Add to card list",
-  "ocr_error": "Error processing image. Please try again."
+  "ocr_error": "Error processing image. Please try again.",
+  "tab_kanji_writing": "Kanji Writing",
+  "tab_hanzi_writing": "Hanzi Writing",
+  "kanji": "Kanji",
+  "kana": "Kana",
+  "hanzi": "Hanzi",
+  "pinyin": "Pinyin",
+  "example_sentence": "Example sentence",
+  "sentence_front": "Sentence (front)",
+  "sentence_back": "Sentence (back)",
+  "kanken_level": "Kanken Level",
+  "hsk_level": "HSK Level",
+  "generate_diagram": "Generate stroke order",
+  "generating_diagram": "Generating...",
+  "diagram_preview": "Stroke order preview"
 }
 

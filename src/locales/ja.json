@@ -30,6 +30,20 @@
   "ocr_loading": "画像を処理中...",
   "ocr_extracted_text": "抽出されたテキスト",
   "add_to_card_list": "カードリストに追加",
-  "ocr_error": "画像の処理中にエラーが発生しました。もう一度お試しください。"
+  "ocr_error": "画像の処理中にエラーが発生しました。もう一度お試しください。",
+  "tab_kanji_writing": "漢字書き",
+  "tab_hanzi_writing": "漢字書き（中国語）",
+  "kanji": "漢字",
+  "kana": "かな",
+  "hanzi": "漢字",
+  "pinyin": "ピンイン",
+  "example_sentence": "例文",
+  "sentence_front": "例文（表）",
+  "sentence_back": "例文（裏）",
+  "kanken_level": "漢検レベル",
+  "hsk_level": "HSKレベル",
+  "generate_diagram": "筆順を生成",
+  "generating_diagram": "生成中...",
+  "diagram_preview": "筆順プレビュー"
 }
 
