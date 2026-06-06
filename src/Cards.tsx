@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import LogoutButton from "./LogoutButton";
 import SettingsComponent from "./Settings";
 import PhotoOCR from "./PhotoOCR";
+import WritingCard from "./WritingCard";
 import "./App.css";
 import { SentenceCard } from "./types/Cards";
 import { AppSettings } from "./types/AppSettings";
@@ -127,7 +128,7 @@ function Cards() {
 
   const [ankiResults, setAnkiResults] = useState<AnkiConnectResult[]>([]);
 
-  const [activeTab, setActiveTab] = useState<"text" | "photo">("text");
+  const [activeTab, setActiveTab] = useState<"text" | "photo" | "kanji-writing" | "hanzi-writing">("text");
   const [hasPhotoOCR, setHasPhotoOCR] = useState(false);
 
   useEffect(() => {
@@ -207,6 +208,18 @@ function Cards() {
             {t("tab_photo")}
           </button>
         )}
+        <button
+          className={`tab-btn${activeTab === "kanji-writing" ? " tab-btn--active" : ""}`}
+          onClick={() => setActiveTab("kanji-writing")}
+        >
+          {t("tab_kanji_writing")}
+        </button>
+        <button
+          className={`tab-btn${activeTab === "hanzi-writing" ? " tab-btn--active" : ""}`}
+          onClick={() => setActiveTab("hanzi-writing")}
+        >
+          {t("tab_hanzi_writing")}
+        </button>
       </div>
 
       {activeTab === "text" && (
@@ -274,6 +287,14 @@ function Cards() {
           translationLanguage={translationLanguage}
           onCardAdded={addSentenceFromOCR}
         />
+      )}
+
+      {activeTab === "kanji-writing" && (
+        <WritingCard language="jp-JP" settings={settings} />
+      )}
+
+      {activeTab === "hanzi-writing" && (
+        <WritingCard language="zh-CN" settings={settings} />
       )}
 
       <br />

@@ -442,6 +442,101 @@ button:active {
   width: auto;
 }
 
+.photo-ocr-loading { color: #6b7280; font-style: italic; }
+.photo-ocr-error { color: #ef4444; }
+.photo-ocr-result { margin-top: 16px; }
+
+/* Writing card form */
+.writing-card-container {
+  margin-top: 10px;
+}
+
+.writing-card-field {
+  margin-bottom: 16px;
+}
+
+.writing-card-field-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.writing-card-field-grow {
+  flex: 1;
+}
+
+.writing-card-label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 6px;
+  font-size: 14px;
+  color: #374151;
+}
+
+.dark-mode .writing-card-label {
+  color: #e0e0e0;
+}
+
+.writing-card-input {
+  width: 100%;
+  padding: 8px 12px;
+  font-size: 16px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.writing-card-input:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 6px rgba(59, 130, 246, 0.3);
+}
+
+.dark-mode .writing-card-input {
+  background-color: #23272f;
+  color: #e0e0e0;
+  border-color: #444;
+}
+
+.writing-card-input-narrow {
+  max-width: 120px;
+}
+
+.writing-card-textarea {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.writing-card-inline-btn {
+  width: auto;
+  flex-shrink: 0;
+  margin-bottom: 0;
+}
+
+.writing-card-preview {
+  margin-bottom: 16px;
+}
+
+.writing-card-diagram-section {
+  margin-bottom: 16px;
+}
+
+.writing-card-diagram-section button {
+  width: auto;
+  margin-bottom: 12px;
+}
+
+.writing-card-diagram-img {
+  display: block;
+  max-width: 100%;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  background: white;
+  padding: 4px;
+  image-rendering: pixelated;
+}
+
 .photo-ocr-loading {
   color: #6b7280;
   font-style: italic;
