@@ -353,3 +353,104 @@ button:active {
 .language-dropdown:hover {
   border-color: #cbd5e1;
 }
+
+/* Tab navigation */
+.tab-nav {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.tab-btn {
+  width: auto;
+  background-color: transparent;
+  color: #374151;
+  border: none;
+  border-bottom: 3px solid transparent;
+  border-radius: 0;
+  padding: 10px 20px;
+  margin: 0;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.tab-btn:hover {
+  background-color: transparent;
+  color: #3b82f6;
+}
+
+.tab-btn--active {
+  color: #3b82f6;
+  border-bottom-color: #3b82f6;
+}
+
+.dark-mode .tab-btn {
+  background-color: transparent;
+  color: #e0e0e0;
+}
+
+.dark-mode .tab-btn:hover {
+  background-color: transparent;
+  color: #93c5fd;
+}
+
+.dark-mode .tab-btn--active {
+  color: #93c5fd;
+  border-bottom-color: #93c5fd;
+}
+
+/* Photo OCR */
+.photo-ocr-container {
+  margin-top: 10px;
+}
+
+.photo-ocr-file-input {
+  display: block;
+  margin-bottom: 16px;
+}
+
+.photo-ocr-instruction {
+  font-size: 14px;
+  color: #6b7280;
+  margin-bottom: 8px;
+}
+
+.photo-ocr-canvas {
+  display: block;
+  max-width: 100%;
+  cursor: crosshair;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  touch-action: none;
+}
+
+.dark-mode .photo-ocr-canvas {
+  border-color: #444;
+}
+
+.photo-ocr-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.photo-ocr-actions button {
+  width: auto;
+}
+
+.photo-ocr-loading {
+  color: #6b7280;
+  font-style: italic;
+}
+
+.photo-ocr-error {
+  color: #ef4444;
+}
+
+.photo-ocr-result {
+  margin-top: 16px;
+}

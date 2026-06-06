@@ -20,6 +20,16 @@
   "Save Settings": "設定を保存",
   "source_language": "入力言語",
   "japanese": "日本語",
-  "chinese": "中国語"
+  "chinese": "中国語",
+  "tab_text": "テキスト",
+  "tab_photo": "OCR写真",
+  "drag_to_select": "ドラッグして範囲を選択。複数の範囲を選択して行をまたいだテキストを取得できます。",
+  "remove_last": "最後の範囲を削除",
+  "clear_regions": "全範囲を削除",
+  "crop_and_submit": "意味を取得",
+  "ocr_loading": "画像を処理中...",
+  "ocr_extracted_text": "抽出されたテキスト",
+  "add_to_card_list": "カードリストに追加",
+  "ocr_error": "画像の処理中にエラーが発生しました。もう一度お試しください。"
 }
 
