@@ -20,6 +20,16 @@
   "Save Settings": "Save Settings",
   "source_language": "Source Language",
   "japanese": "Japanese",
-  "chinese": "Chinese"
+  "chinese": "Chinese",
+  "tab_text": "Text",
+  "tab_photo": "OCR Photo",
+  "drag_to_select": "Drag to select regions. Draw multiple regions to capture text across lines.",
+  "remove_last": "Remove last region",
+  "clear_regions": "Clear all regions",
+  "crop_and_submit": "Get Meaning",
+  "ocr_loading": "Processing image...",
+  "ocr_extracted_text": "Extracted text",
+  "add_to_card_list": "Add to card list",
+  "ocr_error": "Error processing image. Please try again."
 }
 
