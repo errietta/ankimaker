@@ -10,8 +10,9 @@ const outDir = path.join(root, "public", "data");
 fs.mkdirSync(outDir, { recursive: true });
 
 // ── KanjiVG ──────────────────────────────────────────────────────────────────
-// Extracts path `d` attributes from each minified SVG.
-// Output: { "05c71": ["M52.49,15.5...", ...], ... }
+// Extracts path `d` attributes from each minified SVG, and stroke start
+// positions from the paired JSON (used to render stroke-order numbers).
+// Output: { "05c71": { paths: ["M52.49,..."], starts: [{x,y},...] }, ... }
 const kanjivgDir = path.join(root, "node_modules", "@madcat", "kanjivg", "dist", "main");
 const kanjivgOut = {};
 const svgFiles = fs.readdirSync(kanjivgDir).filter((f) => f.endsWith(".svg"));
@@ -22,7 +23,10 @@ for (const file of svgFiles) {
   const re = / d="([^"]+)"/g;
   let m;
   while ((m = re.exec(svg)) !== null) paths.push(m[1]);
-  if (paths.length > 0) kanjivgOut[cp] = paths;
+  if (paths.length === 0) continue;
+  const strokeMeta = JSON.parse(fs.readFileSync(path.join(kanjivgDir, `${cp}.json`), "utf-8"));
+  const starts = strokeMeta.map((s) => s.start);
+  kanjivgOut[cp] = { paths, starts };
 }
 fs.writeFileSync(path.join(outDir, "kanjivg.json"), JSON.stringify(kanjivgOut));
 console.log(`kanjivg.json: ${svgFiles.length} kanji`);
