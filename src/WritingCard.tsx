@@ -24,7 +24,12 @@ const STROKE_COLORS = [
 ];
 
 async function generateJPDiagram(word: string): Promise<string | null> {
-  const chars = [...word];
+  const chars = [...word].filter((ch) => {
+    const cp = ch.codePointAt(0)!;
+    return (cp >= 0x4e00 && cp <= 0x9fff) ||
+           (cp >= 0x3400 && cp <= 0x4dbf) ||
+           (cp >= 0xf900 && cp <= 0xfaff);
+  });
   const size = 109; // KanjiVG viewBox is 109x109
   const canvas = document.createElement("canvas");
   canvas.width = size * chars.length;
