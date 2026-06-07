@@ -231,7 +231,10 @@ function WritingCard({ language, settings }: WritingCardProps) {
         <input
           type="text"
           value={word}
-          onChange={(e) => setWord(e.target.value)}
+          onChange={(e) => {
+            if (sentence === word) setSentence(e.target.value);
+            setWord(e.target.value);
+          }}
           className="writing-card-input"
         />
       </div>
