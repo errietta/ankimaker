@@ -44,6 +44,10 @@
   "hsk_level": "HSKレベル",
   "generate_diagram": "筆順を生成",
   "generating_diagram": "生成中...",
-  "diagram_preview": "筆順プレビュー"
+  "diagram_preview": "筆順プレビュー",
+  "loading_stroke_data": "筆順データを読み込み中…",
+  "loading_stroke_hint": "初回のみ — 次回からはオフラインでも動作します",
+  "loading_stroke_error": "筆順データの読み込みに失敗しました。",
+  "retry": "再試行"
 }
 

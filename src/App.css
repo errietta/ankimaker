@@ -527,6 +527,61 @@ button:active {
   margin-bottom: 12px;
 }
 
+/* Stroke data loading indicator */
+@keyframes diagram-spin {
+  to { transform: rotate(360deg); }
+}
+
+.diagram-loading {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px 0 14px;
+  color: #6b7280;
+}
+
+.diagram-loading-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 15px;
+}
+
+.diagram-loading-spinner {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border: 2.5px solid #e2e8f0;
+  border-top-color: #6b7280;
+  border-radius: 50%;
+  animation: diagram-spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+
+.diagram-loading-hint {
+  font-size: 12px;
+  color: #9ca3af;
+  padding-left: 28px;
+}
+
+.diagram-loading-error {
+  font-size: 14px;
+  color: #ef4444;
+}
+
+.dark-mode .diagram-loading {
+  color: #9ca3af;
+}
+
+.dark-mode .diagram-loading-spinner {
+  border-color: #374151;
+  border-top-color: #9ca3af;
+}
+
+.dark-mode .diagram-loading-hint {
+  color: #6b7280;
+}
+
 .writing-card-diagram-img {
   display: block;
   max-width: 100%;

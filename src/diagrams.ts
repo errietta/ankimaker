@@ -48,11 +48,12 @@ type KanjivgData = Record<string, string[]>;
 
 // Lazy singleton — fetched once per session, then served offline by the SW.
 let kanjivgLoad: Promise<KanjivgData> | null = null;
+let kanjivgReady = false;
 function loadKanjivg(): Promise<KanjivgData> {
   if (!kanjivgLoad) {
-    kanjivgLoad = fetch(`${process.env.PUBLIC_URL}/data/kanjivg.json`).then(
-      (r) => r.json()
-    );
+    kanjivgLoad = fetch(`${process.env.PUBLIC_URL}/data/kanjivg.json`)
+      .then((r) => r.json())
+      .then((data) => { kanjivgReady = true; return data; });
   }
   return kanjivgLoad;
 }
@@ -100,13 +101,22 @@ interface HanziCharData {
 type HanziData = Record<string, HanziCharData>;
 
 let hanziLoad: Promise<HanziData> | null = null;
+let hanziReady = false;
 function loadHanzi(): Promise<HanziData> {
   if (!hanziLoad) {
-    hanziLoad = fetch(`${process.env.PUBLIC_URL}/data/hanzi.json`).then((r) =>
-      r.json()
-    );
+    hanziLoad = fetch(`${process.env.PUBLIC_URL}/data/hanzi.json`)
+      .then((r) => r.json())
+      .then((data) => { hanziReady = true; return data; });
   }
   return hanziLoad;
+}
+
+export function preloadDiagramData(language: "jp-JP" | "zh-CN"): Promise<unknown> {
+  return language === "jp-JP" ? loadKanjivg() : loadHanzi();
+}
+
+export function isDiagramDataReady(language: "jp-JP" | "zh-CN"): boolean {
+  return language === "jp-JP" ? kanjivgReady : hanziReady;
 }
 
 export async function generateCNDiagram(word: string): Promise<string | null> {

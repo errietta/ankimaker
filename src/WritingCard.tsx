@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useTranslation } from "react-i18next";
 import { ApiClient } from "./api/meaning";
@@ -6,7 +6,14 @@ import { addWritingCardToAnki } from "./api/ankiConnect";
 import { AppSettings } from "./types/AppSettings";
 import { WritingCardData } from "./types/Cards";
 import { AnkiConnectResult } from "./types/AnkiConnect";
-import { generateJPDiagram, generateCNDiagram } from "./diagrams";
+import {
+  generateJPDiagram,
+  generateCNDiagram,
+  preloadDiagramData,
+  isDiagramDataReady,
+} from "./diagrams";
+
+type DataState = "loading" | "ready" | "error";
 
 interface WritingCardProps {
   language: "jp-JP" | "zh-CN";
@@ -32,6 +39,21 @@ function WritingCard({ language, settings }: WritingCardProps) {
   const [diagramBase64, setDiagramBase64] = useState<string | null>(null);
   const [isGeneratingDiagram, setIsGeneratingDiagram] = useState(false);
   const [saveResult, setSaveResult] = useState<AnkiConnectResult | null>(null);
+  const [dataState, setDataState] = useState<DataState>(
+    () => isDiagramDataReady(language) ? "ready" : "loading"
+  );
+
+  const startDataLoad = useCallback(() => {
+    setDataState("loading");
+    preloadDiagramData(language)
+      .then(() => setDataState("ready"))
+      .catch(() => setDataState("error"));
+  }, [language]);
+
+  useEffect(() => {
+    if (!isDiagramDataReady(language)) startDataLoad();
+    else setDataState("ready");
+  }, [language, startDataLoad]);
 
   const handleDeckChange = (value: string) => {
     setDeck(value);
@@ -170,19 +192,40 @@ function WritingCard({ language, settings }: WritingCardProps) {
       </div>
 
       <div className="writing-card-diagram-section">
-        <button
-          className="button-alt"
-          onClick={handleGenerateDiagram}
-          disabled={!word || isGeneratingDiagram}
-        >
-          {isGeneratingDiagram ? t("generating_diagram") : t("generate_diagram")}
-        </button>
-        {diagramBase64 && (
-          <img
-            src={`data:image/png;base64,${diagramBase64}`}
-            alt={t("diagram_preview")}
-            className="writing-card-diagram-img"
-          />
+        {dataState === "loading" && (
+          <div className="diagram-loading">
+            <div className="diagram-loading-row">
+              <span className="diagram-loading-spinner" />
+              <span>{t("loading_stroke_data")}</span>
+            </div>
+            <span className="diagram-loading-hint">{t("loading_stroke_hint")}</span>
+          </div>
+        )}
+        {dataState === "error" && (
+          <div className="diagram-loading">
+            <span className="diagram-loading-error">{t("loading_stroke_error")}</span>
+            <button className="button-alt writing-card-inline-btn" onClick={startDataLoad}>
+              {t("retry")}
+            </button>
+          </div>
+        )}
+        {dataState === "ready" && (
+          <>
+            <button
+              className="button-alt"
+              onClick={handleGenerateDiagram}
+              disabled={!word || isGeneratingDiagram}
+            >
+              {isGeneratingDiagram ? t("generating_diagram") : t("generate_diagram")}
+            </button>
+            {diagramBase64 && (
+              <img
+                src={`data:image/png;base64,${diagramBase64}`}
+                alt={t("diagram_preview")}
+                className="writing-card-diagram-img"
+              />
+            )}
+          </>
         )}
       </div>
 
