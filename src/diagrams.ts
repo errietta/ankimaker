@@ -42,15 +42,28 @@ function renderSvgBlob(
   });
 }
 
-// Served from the @madcat/kanjivg npm package (version tracked in package.json)
-const KANJIVG_CDN =
-  "https://cdn.jsdelivr.net/npm/@madcat/kanjivg@5.0.0/dist/main";
+// Keyed by 5-digit hex codepoint; value is an array of SVG path `d` strings.
+// Bundled from @madcat/kanjivg by scripts/bundle-data.js.
+type KanjivgData = Record<string, string[]>;
+
+// Lazy singleton — fetched once per session, then served offline by the SW.
+let kanjivgLoad: Promise<KanjivgData> | null = null;
+function loadKanjivg(): Promise<KanjivgData> {
+  if (!kanjivgLoad) {
+    kanjivgLoad = fetch(`${process.env.PUBLIC_URL}/data/kanjivg.json`).then(
+      (r) => r.json()
+    );
+  }
+  return kanjivgLoad;
+}
 
 export async function generateJPDiagram(word: string): Promise<string | null> {
   const chars = [...word].filter(isCJK);
   if (chars.length === 0) return null;
 
-  const size = 109; // @madcat/kanjivg viewBox is 109x109
+  const kanjivg = await loadKanjivg();
+
+  const size = 109; // viewBox is 109x109
   const canvas = document.createElement("canvas");
   canvas.width = size * chars.length;
   canvas.height = size;
@@ -60,30 +73,18 @@ export async function generateJPDiagram(word: string): Promise<string | null> {
 
   for (let i = 0; i < chars.length; i++) {
     const cp = chars[i].codePointAt(0)!.toString(16).padStart(5, "0");
-    try {
-      const res = await fetch(`${KANJIVG_CDN}/${cp}.svg`);
-      if (!res.ok) continue;
-      const svgText = await res.text();
+    const paths = kanjivg[cp];
+    if (!paths) continue;
 
-      const parser = new DOMParser();
-      const svgDoc = parser.parseFromString(svgText, "image/svg+xml");
-      svgDoc.querySelectorAll("path").forEach((path, pi) => {
-        path.setAttribute(
-          "style",
-          `stroke:${STROKE_COLORS[pi % STROKE_COLORS.length]};stroke-width:3;fill:none;stroke-linecap:round;stroke-linejoin:round;`
-        );
-      });
+    const pathElems = paths
+      .map(
+        (d, pi) =>
+          `<path d="${d}" style="stroke:${STROKE_COLORS[pi % STROKE_COLORS.length]};stroke-width:3;fill:none;stroke-linecap:round;stroke-linejoin:round;"/>`
+      )
+      .join("");
+    const svgStr = `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 109 109">${pathElems}</svg>`;
 
-      await renderSvgBlob(
-        new XMLSerializer().serializeToString(svgDoc),
-        ctx,
-        i * size,
-        0,
-        size
-      );
-    } catch {
-      continue;
-    }
+    await renderSvgBlob(svgStr, ctx, i * size, 0, size);
   }
 
   return canvas.toDataURL("image/png").split(",")[1];
@@ -94,13 +95,25 @@ interface HanziCharData {
   medians: number[][][];
 }
 
-// Served from the hanzi-writer-data npm package (version tracked in package.json)
-const HANZI_WRITER_CDN =
-  "https://cdn.jsdelivr.net/npm/hanzi-writer-data@2.0.1";
+// Keyed by the Unicode character itself.
+// Bundled from hanzi-writer-data by scripts/bundle-data.js.
+type HanziData = Record<string, HanziCharData>;
+
+let hanziLoad: Promise<HanziData> | null = null;
+function loadHanzi(): Promise<HanziData> {
+  if (!hanziLoad) {
+    hanziLoad = fetch(`${process.env.PUBLIC_URL}/data/hanzi.json`).then((r) =>
+      r.json()
+    );
+  }
+  return hanziLoad;
+}
 
 export async function generateCNDiagram(word: string): Promise<string | null> {
   const chars = [...word];
   if (chars.length === 0) return null;
+
+  const hanzi = await loadHanzi();
 
   const charSize = 120;
   const padding = 8;
@@ -112,33 +125,28 @@ export async function generateCNDiagram(word: string): Promise<string | null> {
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
   for (let ci = 0; ci < chars.length; ci++) {
-    try {
-      const res = await fetch(`${HANZI_WRITER_CDN}/${chars[ci]}.json`);
-      if (!res.ok) continue;
-      const charData: HanziCharData = await res.json();
+    const charData = hanzi[chars[ci]];
+    if (!charData) continue;
 
-      const innerSize = charSize - padding * 2;
-      const paths = charData.strokes
-        .map(
-          (d, i) =>
-            `<path d="${d}" fill="${STROKE_COLORS[i % STROKE_COLORS.length]}"/>`
-        )
-        .join("");
+    const innerSize = charSize - padding * 2;
+    const paths = charData.strokes
+      .map(
+        (d, i) =>
+          `<path d="${d}" fill="${STROKE_COLORS[i % STROKE_COLORS.length]}"/>`
+      )
+      .join("");
 
-      // medians use bottom-left origin; svgY = 900 - strokeY converts to SVG space
-      const numbers = charData.medians
-        .map((median, i) => {
-          if (!median || median.length === 0) return "";
-          const [mx, my] = median[0];
-          return `<text x="${mx}" y="${900 - my}" font-size="80" fill="white" stroke="#222" stroke-width="18" paint-order="stroke" text-anchor="middle" dominant-baseline="middle" font-family="sans-serif" font-weight="bold">${i + 1}</text>`;
-        })
-        .join("");
+    // medians use bottom-left origin; svgY = 900 - strokeY converts to SVG space
+    const numbers = charData.medians
+      .map((median, i) => {
+        if (!median || median.length === 0) return "";
+        const [mx, my] = median[0];
+        return `<text x="${mx}" y="${900 - my}" font-size="80" fill="white" stroke="#222" stroke-width="18" paint-order="stroke" text-anchor="middle" dominant-baseline="middle" font-family="sans-serif" font-weight="bold">${i + 1}</text>`;
+      })
+      .join("");
 
-      const svgStr = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="${innerSize}" height="${innerSize}"><g transform="scale(1,-1) translate(0,-900)">${paths}</g>${numbers}</svg>`;
-      await renderSvgBlob(svgStr, ctx, ci * charSize + padding, padding, innerSize);
-    } catch {
-      continue;
-    }
+    const svgStr = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="${innerSize}" height="${innerSize}"><g transform="scale(1,-1) translate(0,-900)">${paths}</g>${numbers}</svg>`;
+    await renderSvgBlob(svgStr, ctx, ci * charSize + padding, padding, innerSize);
   }
 
   return canvas.toDataURL("image/png").split(",")[1];
