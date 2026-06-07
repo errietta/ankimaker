@@ -11,7 +11,7 @@ import { clientsClaim } from 'workbox-core';
 import { ExpirationPlugin } from 'workbox-expiration';
 import { precacheAndRoute, createHandlerBoundToURL } from 'workbox-precaching';
 import { registerRoute } from 'workbox-routing';
-import { StaleWhileRevalidate } from 'workbox-strategies';
+import { CacheFirst, StaleWhileRevalidate } from 'workbox-strategies';
 
 clientsClaim();
 
@@ -69,4 +69,12 @@ self.addEventListener('message', (event) => {
   }
 });
 
-// Any other custom service worker logic can go here.
+// Stroke data bundles exceed Workbox's 2 MB precache limit, so cache them at
+// runtime on first fetch. CacheFirst means offline visits always get the
+// cached copy without a network round-trip.
+registerRoute(
+  ({ url }) =>
+    url.pathname.endsWith('/data/kanjivg.json') ||
+    url.pathname.endsWith('/data/hanzi.json'),
+  new CacheFirst({ cacheName: 'stroke-data' })
+);
