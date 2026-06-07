@@ -42,9 +42,13 @@ function renderSvgBlob(
   });
 }
 
-// Keyed by 5-digit hex codepoint; value is an array of SVG path `d` strings.
+// Keyed by 5-digit hex codepoint.
 // Bundled from @madcat/kanjivg by scripts/bundle-data.js.
-type KanjivgData = Record<string, string[]>;
+interface KanjivgEntry {
+  paths: string[];
+  starts: Array<{ x: number; y: number }>;
+}
+type KanjivgData = Record<string, KanjivgEntry>;
 
 // Lazy singleton — fetched once per session, then served offline by the SW.
 let kanjivgLoad: Promise<KanjivgData> | null = null;
@@ -74,17 +78,25 @@ export async function generateJPDiagram(word: string): Promise<string | null> {
 
   for (let i = 0; i < chars.length; i++) {
     const cp = chars[i].codePointAt(0)!.toString(16).padStart(5, "0");
-    const paths = kanjivg[cp];
-    if (!paths) continue;
+    const entry = kanjivg[cp];
+    if (!entry) continue;
 
-    const pathElems = paths
+    const pathElems = entry.paths
       .map(
         (d, pi) =>
           `<path d="${d}" style="stroke:${STROKE_COLORS[pi % STROKE_COLORS.length]};stroke-width:3;fill:none;stroke-linecap:round;stroke-linejoin:round;"/>`
       )
       .join("");
-    const svgStr = `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 109 109">${pathElems}</svg>`;
 
+    // viewBox is 109x109; font-size ~9 keeps numbers legible at that scale
+    const numberElems = entry.starts
+      .map(
+        ({ x, y }, si) =>
+          `<text x="${x}" y="${y}" font-size="9" fill="white" stroke="#333" stroke-width="2.2" paint-order="stroke" text-anchor="middle" dominant-baseline="middle" font-family="sans-serif" font-weight="bold">${si + 1}</text>`
+      )
+      .join("");
+
+    const svgStr = `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 109 109">${pathElems}${numberElems}</svg>`;
     await renderSvgBlob(svgStr, ctx, i * size, 0, size);
   }
 
