@@ -44,6 +44,10 @@
   "hsk_level": "HSK Level",
   "generate_diagram": "Generate stroke order",
   "generating_diagram": "Generating...",
-  "diagram_preview": "Stroke order preview"
+  "diagram_preview": "Stroke order preview",
+  "loading_stroke_data": "Loading stroke data…",
+  "loading_stroke_hint": "First visit only — works offline after this",
+  "loading_stroke_error": "Failed to load stroke data.",
+  "retry": "Retry"
 }
 

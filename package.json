@@ -5,9 +5,11 @@
   "homepage": "https://errietta.github.io/ankimaker/",
   "dependencies": {
     "@auth0/auth0-react": "^2.2.4",
+    "@madcat/kanjivg": "^5.0.0",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
+    "hanzi-writer-data": "^2.0.1",
     "i18next": "^23.16.4",
     "papaparse": "^5.4.1",
     "react": "^18.3.1",
@@ -17,7 +19,10 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
+    "bundle-data": "node scripts/bundle-data.js",
+    "prestart": "node scripts/bundle-data.js",
     "start": "react-scripts start",
+    "prebuild": "node scripts/bundle-data.js",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",

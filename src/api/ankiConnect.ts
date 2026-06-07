@@ -54,7 +54,6 @@ export const addSentencesToAnki = async (
       }
 
       const data = await response.json();
-      console.log(data);
       results.push({
         success: `Saved "${sentence.text}" successfully`,
         data,
