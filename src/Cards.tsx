@@ -181,18 +181,6 @@ function Cards() {
         defaultSettings={settings}
       />
 
-      <div className="language-section">
-        <h2>{t("source_language")}</h2>
-        <select
-          value={translationLanguage}
-          onChange={(e) => setTranslationLanguage(e.target.value)}
-          className="language-dropdown"
-        >
-          <option value="jp-JP">{t("japanese")}</option>
-          <option value="zh-CN">{t("chinese")}</option>
-        </select>
-      </div>
-
       <div className="tab-nav">
         <button
           className={`tab-btn${activeTab === "text" ? " tab-btn--active" : ""}`}
@@ -224,6 +212,17 @@ function Cards() {
 
       {activeTab === "text" && (
         <>
+          <div className="language-section">
+            <h2>{t("source_language")}</h2>
+            <select
+              value={translationLanguage}
+              onChange={(e) => setTranslationLanguage(e.target.value)}
+              className="language-dropdown"
+            >
+              <option value="jp-JP">{t("japanese")}</option>
+              <option value="zh-CN">{t("chinese")}</option>
+            </select>
+          </div>
           {sentences.map((sentence, index) => (
             <div key={index} className="sentence-container">
               <textarea
