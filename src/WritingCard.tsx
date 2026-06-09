@@ -112,6 +112,14 @@ function WritingCard({ language, settings }: WritingCardProps) {
     const data: WritingCardData = { word, reading, sentence, level, meaning, diagramBase64 };
     const result = await addWritingCardToAnki(data, { ...settings, ankiDeck: deck }, language);
     setSaveResult(result);
+    if (result.success) {
+      setWord("");
+      setReading("");
+      setSentence("");
+      setLevel("");
+      setMeaning("");
+      setDiagramBase64(null);
+    }
   };
 
   return (
