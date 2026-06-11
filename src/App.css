@@ -407,9 +407,48 @@ button:active {
   margin-top: 10px;
 }
 
-.photo-ocr-file-input {
-  display: block;
+.photo-ocr-source-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
   margin-bottom: 16px;
+}
+
+.photo-ocr-source-row button,
+.photo-ocr-source-row .photo-ocr-upload-btn {
+  width: auto;
+}
+
+.photo-ocr-upload-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #6b7280;
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  font-size: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.1s;
+  margin: 5px 0;
+  user-select: none;
+}
+
+.photo-ocr-upload-btn:hover {
+  background-color: #4b5563;
+}
+
+.photo-ocr-upload-btn:active {
+  transform: scale(0.98);
+}
+
+.dark-mode .photo-ocr-upload-btn {
+  background-color: #374151;
+}
+
+.dark-mode .photo-ocr-upload-btn:hover {
+  background-color: #6b7280;
 }
 
 .photo-ocr-instruction {
