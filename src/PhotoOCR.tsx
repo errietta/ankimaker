@@ -31,15 +31,42 @@ function PhotoOCR({ translationLanguage, onCardAdded }: PhotoOCRProps) {
   const imgRef = useRef<HTMLImageElement>(null);
   const dragStart = useRef<{ x: number; y: number } | null>(null);
 
-  const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files || e.target.files.length === 0) return;
-    const reader = new FileReader();
-    reader.addEventListener("load", () => setImgSrc(reader.result?.toString() || ""));
-    reader.readAsDataURL(e.target.files[0]);
+  const hasScreenCapture = !!(navigator.mediaDevices?.getDisplayMedia);
+
+  const loadImage = (src: string) => {
+    setImgSrc(src);
     setRects([]);
     setDrawing(null);
     setResult(null);
     setError(null);
+  };
+
+  const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files || e.target.files.length === 0) return;
+    const reader = new FileReader();
+    reader.addEventListener("load", () => loadImage(reader.result?.toString() || ""));
+    reader.readAsDataURL(e.target.files[0]);
+  };
+
+  const handleScreenCapture = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getDisplayMedia({ video: true });
+      const video = document.createElement("video");
+      video.srcObject = stream;
+      video.muted = true;
+      await new Promise<void>((resolve) => { video.onloadedmetadata = () => resolve(); });
+      await video.play();
+      // Wait for a frame to be ready before capturing
+      await new Promise<void>((resolve) => setTimeout(resolve, 200));
+      const offscreen = document.createElement("canvas");
+      offscreen.width = video.videoWidth;
+      offscreen.height = video.videoHeight;
+      offscreen.getContext("2d")!.drawImage(video, 0, 0);
+      stream.getTracks().forEach((t) => t.stop());
+      loadImage(offscreen.toDataURL("image/png"));
+    } catch {
+      // User cancelled or permission denied — nothing to do
+    }
   };
 
   const onImageLoad = () => {
@@ -88,7 +115,6 @@ function PhotoOCR({ translationLanguage, onCardAdded }: PhotoOCRProps) {
     const src = "touches" in e ? e.touches[0] : (e as React.MouseEvent);
     const cssX = src.clientX - displayRect.left;
     const cssY = src.clientY - displayRect.top;
-    // Convert from CSS display pixels to canvas pixel space (differs when max-width scales canvas down)
     return {
       x: cssX * (canvas.width / displayRect.width),
       y: cssY * (canvas.height / displayRect.height),
@@ -125,38 +151,49 @@ function PhotoOCR({ translationLanguage, onCardAdded }: PhotoOCRProps) {
   };
 
   const handleSubmit = async () => {
-    if (rects.length === 0 || !imgRef.current || !canvasRef.current) return;
+    if (!imgRef.current || !canvasRef.current) return;
 
     const img = imgRef.current;
     const canvas = canvasRef.current;
-    const scaleX = img.naturalWidth / canvas.width;
-    const scaleY = img.naturalHeight / canvas.height;
 
-    // Use draw order (the numbered labels), not Y position — users draw in reading order
-    const scaled = rects.map((r) => ({
-      x: r.x * scaleX,
-      y: r.y * scaleY,
-      w: r.w * scaleX,
-      h: r.h * scaleY,
-    }));
+    let base64: string;
 
-    const totalWidth = Math.max(...scaled.map((r) => r.w));
-    const totalHeight = scaled.reduce((sum, r) => sum + r.h, 0);
+    if (rects.length === 0) {
+      // No region selected — use whole image
+      const out = document.createElement("canvas");
+      out.width = img.naturalWidth;
+      out.height = img.naturalHeight;
+      out.getContext("2d")!.drawImage(img, 0, 0);
+      base64 = out.toDataURL("image/jpeg").split(",")[1];
+    } else {
+      const scaleX = img.naturalWidth / canvas.width;
+      const scaleY = img.naturalHeight / canvas.height;
 
-    const out = document.createElement("canvas");
-    out.width = totalWidth;
-    out.height = totalHeight;
-    const ctx = out.getContext("2d")!;
-    ctx.fillStyle = "white";
-    ctx.fillRect(0, 0, totalWidth, totalHeight);
+      const scaled = rects.map((r) => ({
+        x: r.x * scaleX,
+        y: r.y * scaleY,
+        w: r.w * scaleX,
+        h: r.h * scaleY,
+      }));
 
-    let offsetY = 0;
-    for (const r of scaled) {
-      ctx.drawImage(img, r.x, r.y, r.w, r.h, 0, offsetY, r.w, r.h);
-      offsetY += r.h;
+      const totalWidth = Math.max(...scaled.map((r) => r.w));
+      const totalHeight = scaled.reduce((sum, r) => sum + r.h, 0);
+
+      const out = document.createElement("canvas");
+      out.width = totalWidth;
+      out.height = totalHeight;
+      const ctx = out.getContext("2d")!;
+      ctx.fillStyle = "white";
+      ctx.fillRect(0, 0, totalWidth, totalHeight);
+
+      let offsetY = 0;
+      for (const r of scaled) {
+        ctx.drawImage(img, r.x, r.y, r.w, r.h, 0, offsetY, r.w, r.h);
+        offsetY += r.h;
+      }
+
+      base64 = out.toDataURL("image/jpeg").split(",")[1];
     }
-
-    const base64 = out.toDataURL("image/jpeg").split(",")[1];
 
     setIsLoading(true);
     setError(null);
@@ -185,7 +222,17 @@ function PhotoOCR({ translationLanguage, onCardAdded }: PhotoOCRProps) {
 
   return (
     <div className="photo-ocr-container">
-      <input type="file" accept="image/*" onChange={onFileChange} className="photo-ocr-file-input" />
+      <div className="photo-ocr-source-row">
+        <label className="photo-ocr-upload-btn">
+          <input type="file" accept="image/*" onChange={onFileChange} style={{ display: "none" }} />
+          {t("upload_image")}
+        </label>
+        {hasScreenCapture && (
+          <button className="button-alt" onClick={handleScreenCapture}>
+            {t("capture_screen")}
+          </button>
+        )}
+      </div>
 
       {imgSrc && (
         <>
@@ -220,7 +267,7 @@ function PhotoOCR({ translationLanguage, onCardAdded }: PhotoOCRProps) {
             >
               {t("clear_regions")}
             </button>
-            <button onClick={handleSubmit} disabled={rects.length === 0 || isLoading}>
+            <button onClick={handleSubmit} disabled={isLoading}>
               {t("crop_and_submit")}
             </button>
           </div>
