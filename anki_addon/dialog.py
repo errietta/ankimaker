@@ -23,7 +23,7 @@ from aqt.utils import showInfo, showWarning
 
 from . import ADDON_PACKAGE
 from .api import APIError, get_meaning
-from .auth import clear_tokens, device_flow_login, get_or_refresh_token
+from .auth import clear_tokens, device_flow_login, get_or_refresh_token, get_permissions
 from .cards import add_sentence_card, get_model_field_map
 
 
@@ -232,8 +232,20 @@ class AnkimakerDialog(QDialog):
     def _refresh_login_status(self) -> None:
         token = get_or_refresh_token(self._config)
         if token:
+            perms = get_permissions(token)
+            if "use:anki-addon" not in perms:
+                self.login_status.setText(
+                    '<span style="color:red">❌ Your account does not have access to the Anki add-on. '
+                    "Contact the admin to request the <b>use:anki-addon</b> permission.</span>"
+                )
+                self.login_btn.setText("Logout")
+                self.get_meaning_btn.setEnabled(False)
+                self.add_btn.setEnabled(False)
+                return
             self.login_status.setText('<span style="color:green">✅ Logged in</span>')
             self.login_btn.setText("Logout")
+            self.get_meaning_btn.setEnabled(True)
+            self.add_btn.setEnabled(True)
         else:
             self.login_status.setText(
                 '<span style="color:orange">⚠ Not logged in — click Login to authenticate</span>'

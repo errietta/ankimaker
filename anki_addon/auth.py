@@ -8,6 +8,7 @@ tokens fall back to ~/.config/ankimaker/tokens.json (chmod 600).
 
 from __future__ import annotations
 
+import base64
 import json
 import os
 import time
@@ -152,6 +153,17 @@ def clear_tokens(config: dict) -> None:
     client_id = config["auth0_client_id"]
     for kind in ("access_token", "refresh_token", "expires_at"):
         _delete(_keyring_key(domain, client_id, kind))
+
+
+def get_permissions(token: str) -> list:
+    """Decode the JWT payload and return the permissions list."""
+    try:
+        payload_b64 = token.split(".")[1]
+        padding = 4 - len(payload_b64) % 4
+        payload = json.loads(base64.urlsafe_b64decode(payload_b64 + "=" * padding))
+        return payload.get("permissions", [])
+    except Exception:
+        return []
 
 
 def device_flow_login(
