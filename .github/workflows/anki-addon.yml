@@ -1,0 +1,42 @@
+name: Build Anki Add-on
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - "anki_addon/**"
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install vendored dependencies
+        run: pip install -r requirements.txt --target vendor/
+        working-directory: anki_addon
+
+      - name: Syntax check
+        run: python -m py_compile __init__.py auth.py api.py cards.py dialog.py
+        working-directory: anki_addon
+
+      - name: Package .ankiaddon
+        run: |
+          zip -r ankimaker.ankiaddon anki_addon/ \
+            --exclude "anki_addon/vendor/__pycache__/*" \
+            --exclude "*.pyc" \
+            --exclude "anki_addon/Makefile" \
+            --exclude "anki_addon/requirements.txt" \
+            --exclude "anki_addon/config.md"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ankimaker-addon
+          path: ankimaker.ankiaddon
+          retention-days: 30

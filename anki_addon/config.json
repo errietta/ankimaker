@@ -1,0 +1,10 @@
+{
+  "auth0_domain": "cardmaker-dev.uk.auth0.com",
+  "auth0_client_id": "12Z4xtf5Gl8MnVttMOtZISLcrhPfABUZ",
+  "auth0_audience": "https://card.backend/",
+  "auth0_scope": "read:current_user offline_access",
+  "api_base_url": "https://ankimaker-backend-88a288e4b6bb.herokuapp.com/",
+  "deck": "Default",
+  "language": "jp-JP",
+  "model": ""
+}
