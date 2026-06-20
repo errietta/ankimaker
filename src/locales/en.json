@@ -24,6 +24,7 @@
   "tab_text": "Text",
   "tab_photo": "OCR Photo",
   "upload_image": "Upload Image",
+  "take_photo": "Take Photo",
   "capture_screen": "Capture Screen",
   "drag_to_select": "Drag to select regions in reading order. They will be stacked in the order drawn. Leave unselected to use the whole image.",
   "remove_last": "Remove last region",
