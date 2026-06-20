@@ -29,9 +29,11 @@ function PhotoOCR({ translationLanguage, onCardAdded }: PhotoOCRProps) {
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const imgRef = useRef<HTMLImageElement>(null);
+  const cameraInputRef = useRef<HTMLInputElement>(null);
   const dragStart = useRef<{ x: number; y: number } | null>(null);
 
   const hasScreenCapture = !!(navigator.mediaDevices?.getDisplayMedia);
+  const hasCameraCapture = !!(navigator.mediaDevices?.getUserMedia);
 
   const loadImage = (src: string) => {
     setImgSrc(src);
@@ -227,6 +229,19 @@ function PhotoOCR({ translationLanguage, onCardAdded }: PhotoOCRProps) {
           <input type="file" accept="image/*" onChange={onFileChange} style={{ display: "none" }} />
           {t("upload_image")}
         </label>
+        {hasCameraCapture && (
+          <label className="photo-ocr-upload-btn">
+            <input
+              ref={cameraInputRef}
+              type="file"
+              accept="image/*"
+              capture="environment"
+              onChange={onFileChange}
+              style={{ display: "none" }}
+            />
+            {t("take_photo")}
+          </label>
+        )}
         {hasScreenCapture && (
           <button className="button-alt" onClick={handleScreenCapture}>
             {t("capture_screen")}

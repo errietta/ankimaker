@@ -24,6 +24,7 @@
   "tab_text": "テキスト",
   "tab_photo": "OCR写真",
   "upload_image": "画像をアップロード",
+  "take_photo": "写真を撮る",
   "capture_screen": "スクリーンをキャプチャ",
   "drag_to_select": "読む順番にドラッグして範囲を選択。描いた順番に積み重ねて送信されます。選択しない場合は画像全体を使用します。",
   "remove_last": "最後の範囲を削除",
