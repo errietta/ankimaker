@@ -4,9 +4,12 @@ Generate a printable kanji-writing worksheet from today's due Anki reviews.
 
 Proof of concept: talks to a locally running Anki instance via the
 AnkiConnect add-on (http://127.0.0.1:8765), pulls due cards from the
-"漢字 Writing" deck (and its subdecks), and writes a plain-text (and
-optionally HTML) worksheet with a blank writing space under each prompt
-and an optional answer key at the end.
+"漢字 Writing" deck (and its subdecks), and writes a printable HTML
+worksheet (a self-contained file with a bundled Japanese font, so kanji
+render correctly regardless of what fonts are installed on the machine
+that prints it) with a blank writing space under each prompt and an
+optional answer key at the end. Plain-text output is still available
+via --text if you don't need the font/print styling.
 
 Requirements:
 - Anki must be running with the AnkiConnect add-on installed and enabled.
@@ -14,14 +17,16 @@ Requirements:
 
 Usage:
     python3 scripts/kanji_worksheet.py
-    python3 scripts/kanji_worksheet.py --deck "漢字 Writing" --output worksheet.txt
-    python3 scripts/kanji_worksheet.py --html --output worksheet.html
+    python3 scripts/kanji_worksheet.py --deck "漢字 Writing" --output worksheet.html
+    python3 scripts/kanji_worksheet.py --text --output worksheet.txt
     python3 scripts/kanji_worksheet.py --max-cards 20 --no-answer-key
 """
 
 import argparse
+import base64
 import html
 import json
+import os
 import re
 import sys
 import urllib.error
@@ -30,6 +35,17 @@ from html.parser import HTMLParser
 
 ANKICONNECT_URL = "http://127.0.0.1:8765"
 ANKICONNECT_VERSION = 6
+
+# Bundled font used for the HTML worksheet, embedded as base64 so the
+# output file is fully self-contained (no missing-kanji-glyph "tofu"
+# boxes when printing from a machine that doesn't have a Japanese font
+# installed). HGKyokashotai is a "kyokasho-tai" (textbook-style)
+# typeface, which is the same style used in Japanese school textbooks
+# for stroke practice. Source: OnlineWebFonts.com, CC BY 4.0 -- see
+# scripts/fonts/ATTRIBUTION.txt.
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+DEFAULT_FONT_PATH = os.path.join(SCRIPT_DIR, "fonts", "HGKyokashotai.woff2")
+FONT_FAMILY_NAME = "HGKyokashotai"
 
 # Field names (in priority order) that are likely to hold "the answer" i.e.
 # the kanji/expression the card is testing. Anki note types vary a lot from
@@ -290,8 +306,37 @@ def render_txt(items, include_answer_key=True, blank_lines=4):
     return "\n".join(out) + "\n"
 
 
-def render_html(items, include_answer_key=True, deck_name=""):
-    """Render worksheet items as a print-friendly HTML document."""
+def load_font_face_css(font_path, family_name=FONT_FAMILY_NAME):
+    """Return an @font-face CSS block with the font embedded as base64.
+
+    Returns an empty string (and prints a warning) if the font file
+    can't be read -- the worksheet still renders fine, it just falls
+    back to whatever Japanese-capable system fonts are installed.
+    """
+    try:
+        with open(font_path, "rb") as f:
+            font_bytes = f.read()
+    except OSError as exc:
+        print(
+            "Warning: could not load bundled font at {path} ({err}); "
+            "falling back to system fonts.".format(path=font_path, err=exc),
+            file=sys.stderr,
+        )
+        return ""
+
+    encoded = base64.b64encode(font_bytes).decode("ascii")
+    return """
+  @font-face {{
+    font-family: "{family}";
+    src: url(data:font/woff2;base64,{data}) format("woff2");
+    font-weight: normal;
+    font-style: normal;
+  }}""".format(family=family_name, data=encoded)
+
+
+def render_html(items, include_answer_key=True, deck_name="", font_path=DEFAULT_FONT_PATH):
+    """Render worksheet items as a print-friendly, self-contained HTML document."""
+    font_face_css = load_font_face_css(font_path)
     rows = []
     for index, (prompt, _answer) in enumerate(items, start=1):
         rows.append(
@@ -330,12 +375,13 @@ def render_html(items, include_answer_key=True, deck_name=""):
 <meta charset="UTF-8">
 <title>{title}</title>
 <style>
+{font_face}
   @page {{
     size: A4;
     margin: 18mm;
   }}
   body {{
-    font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+    font-family: "{font_family}", "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
     font-size: 14pt;
     color: #111;
   }}
@@ -354,6 +400,7 @@ def render_html(items, include_answer_key=True, deck_name=""):
   .prompt {{
     margin-bottom: 3mm;
     line-height: 1.6;
+    font-size: 16pt;
   }}
   .writing-box {{
     border: 1px solid #888;
@@ -372,15 +419,28 @@ def render_html(items, include_answer_key=True, deck_name=""):
   .answer-list {{
     column-count: 2;
   }}
+  .font-credit {{
+    margin-top: 10mm;
+    font-size: 8pt;
+    color: #999;
+  }}
 </style>
 </head>
 <body>
   <h1>{title}</h1>
 {rows}
 {answer_key}
+  <!-- Font attribution required by CC BY 4.0, see scripts/fonts/ATTRIBUTION.txt -->
+  <div class="font-credit">Font: HGKyokashotai, from <a href="http://www.onlinewebfonts.com">OnlineWebFonts.com</a> (CC BY 4.0)</div>
 </body>
 </html>
-""".format(title=title, rows="".join(rows), answer_key=answer_key_html)
+""".format(
+        title=title,
+        font_face=font_face_css,
+        font_family=FONT_FAMILY_NAME,
+        rows="".join(rows),
+        answer_key=answer_key_html,
+    )
 
 
 def parse_args(argv=None):
@@ -394,8 +454,8 @@ def parse_args(argv=None):
     )
     parser.add_argument(
         "--output",
-        default="kanji_writing_worksheet.txt",
-        help="Output file path (default: kanji_writing_worksheet.txt).",
+        default="kanji_writing_worksheet.html",
+        help="Output file path (default: kanji_writing_worksheet.html).",
     )
     parser.add_argument(
         "--max-cards",
@@ -409,9 +469,19 @@ def parse_args(argv=None):
         help="Omit the answer key section from the worksheet.",
     )
     parser.add_argument(
-        "--html",
+        "--text",
         action="store_true",
-        help="Generate a print-friendly HTML worksheet instead of plain text.",
+        help=(
+            "Generate a plain-text worksheet instead of the default "
+            "print-friendly HTML (HTML is recommended: it bundles a "
+            "Japanese font so kanji always render correctly when printed)."
+        ),
+    )
+    parser.add_argument(
+        "--font",
+        default=DEFAULT_FONT_PATH,
+        help="Path to a .woff2 font to embed in the HTML worksheet "
+        "(default: bundled scripts/fonts/HGKyokashotai.woff2). Ignored with --text.",
     )
     parser.add_argument(
         "--ankiconnect-url",
@@ -439,10 +509,15 @@ def main(argv=None):
 
     items = build_worksheet_items(cards)
 
-    if args.html:
-        content = render_html(items, include_answer_key=include_answer_key, deck_name=args.deck)
-    else:
+    if args.text:
         content = render_txt(items, include_answer_key=include_answer_key)
+    else:
+        content = render_html(
+            items,
+            include_answer_key=include_answer_key,
+            deck_name=args.deck,
+            font_path=args.font,
+        )
 
     with open(args.output, "w", encoding="utf-8") as f:
         f.write(content)
