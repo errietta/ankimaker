@@ -1,0 +1,8 @@
+Font: HGKyokashotai (a Japanese "kyokasho-tai" textbook-style typeface,
+well suited for kanji writing practice sheets)
+
+Source: OnlineWebFonts.com (http://www.onlinewebfonts.com)
+License: CC BY 4.0
+
+Attribution required by the license:
+<div>Fonts made from <a href="http://www.onlinewebfonts.com">Web Fonts</a> is licensed by CC BY 4.0</div>
