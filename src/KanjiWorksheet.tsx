@@ -18,6 +18,10 @@ function KanjiWorksheet({ settings }: KanjiWorksheetProps) {
   );
   const [maxCards, setMaxCards] = useState("");
   const [includeAnswerKey, setIncludeAnswerKey] = useState(true);
+  // Off by default: most people writing kanji by hand use a separate
+  // notebook, and skipping the boxes turns a many-page printout into a
+  // couple of pages.
+  const [includeWritingBoxes, setIncludeWritingBoxes] = useState(false);
   const [items, setItems] = useState<WorksheetItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -79,6 +83,14 @@ function KanjiWorksheet({ settings }: KanjiWorksheetProps) {
           />
           {t("worksheet_include_answer_key")}
         </label>
+        <label className="worksheet-checkbox-label">
+          <input
+            type="checkbox"
+            checked={includeWritingBoxes}
+            onChange={(e) => setIncludeWritingBoxes(e.target.checked)}
+          />
+          {t("worksheet_include_writing_boxes")}
+        </label>
       </div>
 
       <button className="button-alt" onClick={handleFetch} disabled={!deck || isLoading}>
@@ -104,17 +116,15 @@ function KanjiWorksheet({ settings }: KanjiWorksheetProps) {
             <h2 className="worksheet-title">{t("worksheet_title")}</h2>
 
             {items.map((item, index) => (
-              <div className="worksheet-item" key={index}>
+              <div
+                className={`worksheet-item${includeWritingBoxes ? "" : " worksheet-item--compact"}`}
+                key={index}
+              >
                 <div className="worksheet-prompt">
                   <span className="worksheet-num">{index + 1}.</span>{" "}
-                  {item.prompt.split("\n").map((line, lineIndex) => (
-                    <span key={lineIndex}>
-                      {lineIndex > 0 && <br />}
-                      {line}
-                    </span>
-                  ))}
+                  <span dangerouslySetInnerHTML={{ __html: item.promptHtml }} />
                 </div>
-                <div className="worksheet-writing-box" />
+                {includeWritingBoxes && <div className="worksheet-writing-box" />}
               </div>
             ))}
 

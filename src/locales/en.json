@@ -58,6 +58,7 @@
   "worksheet_max_cards": "Max cards",
   "worksheet_no_limit": "No limit",
   "worksheet_include_answer_key": "Include answer key",
+  "worksheet_include_writing_boxes": "Include writing boxes",
   "worksheet_fetch": "Fetch due cards",
   "worksheet_loading": "Fetching...",
   "worksheet_card_count": "{{count}} card(s) loaded",

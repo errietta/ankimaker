@@ -730,6 +730,12 @@ button:active {
   margin-bottom: 20px;
 }
 
+/* No writing box: items are just numbered lines, so pack them tighter --
+   this is what turns a many-page printout into one or two pages. */
+.worksheet-item--compact {
+  margin-bottom: 10px;
+}
+
 .worksheet-num {
   font-weight: bold;
 }
@@ -739,6 +745,14 @@ button:active {
   font-size: 20px;
   line-height: 1.8;
   margin-bottom: 8px;
+}
+
+.worksheet-item--compact .worksheet-prompt {
+  margin-bottom: 0;
+}
+
+.worksheet-prompt u {
+  text-underline-offset: 3px;
 }
 
 .worksheet-writing-box {
