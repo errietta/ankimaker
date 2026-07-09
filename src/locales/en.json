@@ -51,6 +51,19 @@
   "loading_stroke_data": "Loading stroke data…",
   "loading_stroke_hint": "First visit only — works offline after this",
   "loading_stroke_error": "Failed to load stroke data.",
-  "retry": "Retry"
+  "retry": "Retry",
+  "section_card_gen": "Card Gen",
+  "section_worksheet_gen": "Worksheet Gen",
+  "worksheet_deck": "Deck (includes subdecks)",
+  "worksheet_max_cards": "Max cards",
+  "worksheet_no_limit": "No limit",
+  "worksheet_include_answer_key": "Include answer key",
+  "worksheet_fetch": "Fetch due cards",
+  "worksheet_loading": "Fetching...",
+  "worksheet_card_count": "{{count}} card(s) loaded",
+  "worksheet_print": "Print / Save as PDF",
+  "worksheet_title": "Writing Worksheet",
+  "worksheet_answer_key": "Answer Key",
+  "worksheet_font_credit": "Font: HGKyokashotai, from OnlineWebFonts.com (CC BY 4.0)"
 }
 

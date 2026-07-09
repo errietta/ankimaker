@@ -7,6 +7,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0, minimum-scale=1.0" />
     <link rel="icon" type="image/x-icon" href="%PUBLIC_URL%/favicon.ico">
     <title>Anki maker</title>
+    <style>
+      /* Textbook-style Japanese font used by the kanji worksheet print view.
+         CC BY 4.0, OnlineWebFonts.com -- see public/fonts/ATTRIBUTION.txt.
+         Declared here (not loaded eagerly) so it's only fetched by the
+         browser the first time something actually renders with it. */
+      @font-face {
+        font-family: 'HGKyokashotai';
+        src: url('%PUBLIC_URL%/fonts/HGKyokashotai.woff2') format('woff2');
+        font-weight: normal;
+        font-style: normal;
+        font-display: swap;
+      }
+    </style>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>

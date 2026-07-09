@@ -6,6 +6,7 @@ import LogoutButton from "./LogoutButton";
 import SettingsComponent from "./Settings";
 import PhotoOCR from "./PhotoOCR";
 import WritingCard from "./WritingCard";
+import KanjiWorksheet from "./KanjiWorksheet";
 import "./App.css";
 import { SentenceCard } from "./types/Cards";
 import { AppSettings } from "./types/AppSettings";
@@ -128,6 +129,7 @@ function Cards() {
 
   const [ankiResults, setAnkiResults] = useState<AnkiConnectResult[]>([]);
 
+  const [activeSection, setActiveSection] = useState<"card-gen" | "worksheet-gen">("card-gen");
   const [activeTab, setActiveTab] = useState<"text" | "photo" | "kanji-writing" | "hanzi-writing">("text");
   const [hasPhotoOCR, setHasPhotoOCR] = useState(false);
 
@@ -181,120 +183,141 @@ function Cards() {
         defaultSettings={settings}
       />
 
-      <div className="tab-nav">
+      <div className="section-nav">
         <button
-          className={`tab-btn${activeTab === "text" ? " tab-btn--active" : ""}`}
-          onClick={() => setActiveTab("text")}
+          className={`section-btn${activeSection === "card-gen" ? " section-btn--active" : ""}`}
+          onClick={() => setActiveSection("card-gen")}
         >
-          {t("tab_text")}
-        </button>
-        {hasPhotoOCR && (
-          <button
-            className={`tab-btn${activeTab === "photo" ? " tab-btn--active" : ""}`}
-            onClick={() => setActiveTab("photo")}
-          >
-            {t("tab_photo")}
-          </button>
-        )}
-        <button
-          className={`tab-btn${activeTab === "kanji-writing" ? " tab-btn--active" : ""}`}
-          onClick={() => setActiveTab("kanji-writing")}
-        >
-          {t("tab_kanji_writing")}
+          {t("section_card_gen")}
         </button>
         <button
-          className={`tab-btn${activeTab === "hanzi-writing" ? " tab-btn--active" : ""}`}
-          onClick={() => setActiveTab("hanzi-writing")}
+          className={`section-btn${activeSection === "worksheet-gen" ? " section-btn--active" : ""}`}
+          onClick={() => setActiveSection("worksheet-gen")}
         >
-          {t("tab_hanzi_writing")}
+          {t("section_worksheet_gen")}
         </button>
       </div>
 
-      {activeTab === "text" && (
+      {activeSection === "card-gen" && (
         <>
-          <div className="language-section">
-            <h2>{t("source_language")}</h2>
-            <select
-              value={translationLanguage}
-              onChange={(e) => setTranslationLanguage(e.target.value)}
-              className="language-dropdown"
+          <div className="tab-nav">
+            <button
+              className={`tab-btn${activeTab === "text" ? " tab-btn--active" : ""}`}
+              onClick={() => setActiveTab("text")}
             >
-              <option value="jp-JP">{t("japanese")}</option>
-              <option value="zh-CN">{t("chinese")}</option>
-            </select>
-          </div>
-          {sentences.map((sentence, index) => (
-            <div key={index} className="sentence-container">
-              <textarea
-                value={sentence.text}
-                onChange={(event) => handleSentenceChange(index, event)}
-                placeholder={t("add_sentence")}
-                rows={2}
-                cols={30}
-              ></textarea>
-              <button onClick={() => getMeaning(index)}>{t("get_meaning")}</button>
-              {sentence.meaning && (
-                <p>
-                  {t("meaning")}: {sentence.meaning}
-                </p>
-              )}
-              {sentence.reading && (
-                <p>
-                  {t("reading")}: {sentence.reading}
-                </p>
-              )}
-            </div>
-          ))}
-
-          <button className="button-add" onClick={addSentence}>
-            {t("add_sentence")}
-          </button>
-          {settings.ankConnect && (
-            <button className="button-save" onClick={saveToAnkiConnect}>
-              {t("save_to_anki")}
+              {t("tab_text")}
             </button>
-          )}
+            {hasPhotoOCR && (
+              <button
+                className={`tab-btn${activeTab === "photo" ? " tab-btn--active" : ""}`}
+                onClick={() => setActiveTab("photo")}
+              >
+                {t("tab_photo")}
+              </button>
+            )}
+            <button
+              className={`tab-btn${activeTab === "kanji-writing" ? " tab-btn--active" : ""}`}
+              onClick={() => setActiveTab("kanji-writing")}
+            >
+              {t("tab_kanji_writing")}
+            </button>
+            <button
+              className={`tab-btn${activeTab === "hanzi-writing" ? " tab-btn--active" : ""}`}
+              onClick={() => setActiveTab("hanzi-writing")}
+            >
+              {t("tab_hanzi_writing")}
+            </button>
+          </div>
 
-          {ankiResults && (
-            <div className="result">
-              <div>
-                {ankiResults.map((result, index) => (
-                  <p key={index}>
-                    {result.error && (
-                      <span style={{ color: "red" }}>❌ {result.error}</span>
-                    )}
-                    {result.success && (
-                      <span style={{ color: "green" }}>✅ {result.success}</span>
-                    )}
-                  </p>
-                ))}
+          {activeTab === "text" && (
+            <>
+              <div className="language-section">
+                <h2>{t("source_language")}</h2>
+                <select
+                  value={translationLanguage}
+                  onChange={(e) => setTranslationLanguage(e.target.value)}
+                  className="language-dropdown"
+                >
+                  <option value="jp-JP">{t("japanese")}</option>
+                  <option value="zh-CN">{t("chinese")}</option>
+                </select>
               </div>
-            </div>
+              {sentences.map((sentence, index) => (
+                <div key={index} className="sentence-container">
+                  <textarea
+                    value={sentence.text}
+                    onChange={(event) => handleSentenceChange(index, event)}
+                    placeholder={t("add_sentence")}
+                    rows={2}
+                    cols={30}
+                  ></textarea>
+                  <button onClick={() => getMeaning(index)}>{t("get_meaning")}</button>
+                  {sentence.meaning && (
+                    <p>
+                      {t("meaning")}: {sentence.meaning}
+                    </p>
+                  )}
+                  {sentence.reading && (
+                    <p>
+                      {t("reading")}: {sentence.reading}
+                    </p>
+                  )}
+                </div>
+              ))}
+
+              <button className="button-add" onClick={addSentence}>
+                {t("add_sentence")}
+              </button>
+              {settings.ankConnect && (
+                <button className="button-save" onClick={saveToAnkiConnect}>
+                  {t("save_to_anki")}
+                </button>
+              )}
+
+              {ankiResults && (
+                <div className="result">
+                  <div>
+                    {ankiResults.map((result, index) => (
+                      <p key={index}>
+                        {result.error && (
+                          <span style={{ color: "red" }}>❌ {result.error}</span>
+                        )}
+                        {result.success && (
+                          <span style={{ color: "green" }}>✅ {result.success}</span>
+                        )}
+                      </p>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <button className="button-download" onClick={downloadCSV}>
+                {t("get_csv")}
+              </button>
+              <button className="button-danger" onClick={clearAll}>
+                {t("clear_all")}
+              </button>
+            </>
           )}
 
-          <button className="button-download" onClick={downloadCSV}>
-            {t("get_csv")}
-          </button>
-          <button className="button-danger" onClick={clearAll}>
-            {t("clear_all")}
-          </button>
+          {activeTab === "photo" && hasPhotoOCR && (
+            <PhotoOCR
+              translationLanguage={translationLanguage}
+              onCardAdded={addSentenceFromOCR}
+            />
+          )}
+
+          {activeTab === "kanji-writing" && (
+            <WritingCard language="jp-JP" settings={settings} />
+          )}
+
+          {activeTab === "hanzi-writing" && (
+            <WritingCard language="zh-CN" settings={settings} />
+          )}
         </>
       )}
 
-      {activeTab === "photo" && hasPhotoOCR && (
-        <PhotoOCR
-          translationLanguage={translationLanguage}
-          onCardAdded={addSentenceFromOCR}
-        />
-      )}
-
-      {activeTab === "kanji-writing" && (
-        <WritingCard language="jp-JP" settings={settings} />
-      )}
-
-      {activeTab === "hanzi-writing" && (
-        <WritingCard language="zh-CN" settings={settings} />
-      )}
+      {activeSection === "worksheet-gen" && <KanjiWorksheet settings={settings} />}
 
       <br />
       <br />
