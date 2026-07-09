@@ -152,15 +152,10 @@ export function extractAnswer(card: AnkiCardInfo): string | null {
  * Extract the printable prompt/context sentence for a card, as safe HTML
  * (see sanitizeCardHtml).
  *
- * Prefers the card's rendered `question` HTML -- i.e. literally what Anki
- * shows on the front of the card -- over the raw field values, because
- * formatting cues like an underlined target word are often applied by the
- * card template (or added by hand in Anki's rich-text field editor) and
- * only show up in the rendered HTML, not in a plain field value.
  */
 export function extractPrompt(card: AnkiCardInfo): string {
-  const questionHtml = sanitizeCardHtml(card.question);
-  if (questionHtml) return questionHtml;
+  /*const questionHtml = sanitizeCardHtml(card.question);
+  if (questionHtml) return questionHtml;*/
 
   const fields = card.fields || {};
   const knownField = findFormattedFieldValue(fields, PROMPT_FIELD_CANDIDATES);
