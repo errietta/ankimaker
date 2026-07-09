@@ -742,7 +742,7 @@ button:active {
 
 .worksheet-prompt {
   font-family: "HGKyokashotai", "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
-  font-size: 20px;
+  font-size: 8px;
   line-height: 1.8;
   margin-bottom: 8px;
 }
@@ -803,7 +803,5 @@ button:active {
   .worksheet-item {
     break-inside: avoid;
   }
-  .worksheet-answer-key {
-    break-before: page;
-  }
+
 }

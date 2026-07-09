@@ -1,7 +1,7 @@
 import { useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { AppSettings } from "./types/AppSettings";
-import { fetchDueWorksheetCards } from "./api/ankiConnect";
+import { fetchDueCards } from "./api/ankiConnect";
 import { buildWorksheetItems, WorksheetItem } from "./service/worksheet";
 
 interface KanjiWorksheetProps {
@@ -35,7 +35,7 @@ function KanjiWorksheet({ settings }: KanjiWorksheetProps) {
     setIsLoading(true);
     setErrorMessage("");
     try {
-      const cards = await fetchDueWorksheetCards(deck, settings, {
+      const cards = await fetchDueCards(deck, settings, {
         maxCards: maxCards ? parseInt(maxCards, 10) : undefined,
       });
       setItems(buildWorksheetItems(cards));

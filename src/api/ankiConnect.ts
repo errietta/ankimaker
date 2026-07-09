@@ -160,7 +160,7 @@ async function ankiConnectRequest<T>(url: string, action: string, params: Record
  * worksheet feature. Throws with a user-facing message if AnkiConnect is
  * unreachable or no due cards are found.
  */
-export async function fetchDueWorksheetCards(
+export async function fetchDueCards(
   deck: string,
   settings: AppSettings,
   options: { maxCards?: number } = {}
