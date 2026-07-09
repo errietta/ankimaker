@@ -20,6 +20,7 @@
   },
   "scripts": {
     "bundle-data": "node scripts/bundle-data.js",
+    "kanji-worksheet": "node scripts/kanji-worksheet.js",
     "prestart": "node scripts/bundle-data.js",
     "start": "react-scripts start",
     "prebuild": "node scripts/bundle-data.js",
