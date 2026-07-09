@@ -768,7 +768,8 @@ button:active {
 }
 
 .worksheet-answer-list {
-  column-count: 2;
+  column-width: 120px;
+  column-gap: 16px;
   list-style: none;
   margin: 0;
   padding: 0;
