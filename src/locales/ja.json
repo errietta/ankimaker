@@ -58,6 +58,7 @@
   "worksheet_max_cards": "最大カード数",
   "worksheet_no_limit": "制限なし",
   "worksheet_include_answer_key": "解答欄を含める",
+  "worksheet_include_writing_boxes": "書き取り欄を含める",
   "worksheet_fetch": "期限のカードを取得",
   "worksheet_loading": "取得中...",
   "worksheet_card_count": "{{count}}枚のカードを読み込みました",
