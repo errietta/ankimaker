@@ -354,6 +354,50 @@ button:active {
   border-color: #cbd5e1;
 }
 
+/* Top-level section menu (Card Gen / Worksheet Gen) */
+.section-nav {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.section-btn {
+  width: auto;
+  background-color: #eef2ff;
+  color: #374151;
+  border: none;
+  border-radius: 10px;
+  padding: 12px 20px;
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.section-btn:hover {
+  background-color: #e0e7ff;
+}
+
+.section-btn--active {
+  background-color: #3b82f6;
+  color: #fff;
+}
+
+.dark-mode .section-btn {
+  background-color: #23272f;
+  color: #e0e0e0;
+}
+
+.dark-mode .section-btn:hover {
+  background-color: #2d323c;
+}
+
+.dark-mode .section-btn--active {
+  background-color: #3b82f6;
+  color: #fff;
+}
+
 /* Tab navigation */
 .tab-nav {
   display: flex;
