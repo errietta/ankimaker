@@ -6,6 +6,7 @@ import LogoutButton from "./LogoutButton";
 import SettingsComponent from "./Settings";
 import PhotoOCR from "./PhotoOCR";
 import WritingCard from "./WritingCard";
+import KanjiWorksheet from "./KanjiWorksheet";
 import "./App.css";
 import { SentenceCard } from "./types/Cards";
 import { AppSettings } from "./types/AppSettings";
@@ -128,7 +129,9 @@ function Cards() {
 
   const [ankiResults, setAnkiResults] = useState<AnkiConnectResult[]>([]);
 
-  const [activeTab, setActiveTab] = useState<"text" | "photo" | "kanji-writing" | "hanzi-writing">("text");
+  const [activeTab, setActiveTab] = useState<
+    "text" | "photo" | "kanji-writing" | "hanzi-writing" | "worksheet"
+  >("text");
   const [hasPhotoOCR, setHasPhotoOCR] = useState(false);
 
   useEffect(() => {
@@ -207,6 +210,12 @@ function Cards() {
           onClick={() => setActiveTab("hanzi-writing")}
         >
           {t("tab_hanzi_writing")}
+        </button>
+        <button
+          className={`tab-btn${activeTab === "worksheet" ? " tab-btn--active" : ""}`}
+          onClick={() => setActiveTab("worksheet")}
+        >
+          {t("tab_worksheet")}
         </button>
       </div>
 
@@ -295,6 +304,8 @@ function Cards() {
       {activeTab === "hanzi-writing" && (
         <WritingCard language="zh-CN" settings={settings} />
       )}
+
+      {activeTab === "worksheet" && <KanjiWorksheet settings={settings} />}
 
       <br />
       <br />

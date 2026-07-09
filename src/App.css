@@ -643,3 +643,109 @@ button:active {
 .photo-ocr-result {
   margin-top: 16px;
 }
+
+/* Kanji worksheet */
+.worksheet-checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  white-space: nowrap;
+  color: #374151;
+}
+
+.dark-mode .worksheet-checkbox-label {
+  color: #e0e0e0;
+}
+
+.worksheet-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 20px 0 12px;
+}
+
+.worksheet-print-btn {
+  width: auto;
+}
+
+.worksheet-print-area {
+  background: #fff;
+  color: #111;
+  padding: 24px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+}
+
+.worksheet-title {
+  margin-top: 0;
+}
+
+.worksheet-item {
+  margin-bottom: 20px;
+}
+
+.worksheet-num {
+  font-weight: bold;
+}
+
+.worksheet-prompt {
+  font-family: "HGKyokashotai", "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+  font-size: 20px;
+  line-height: 1.8;
+  margin-bottom: 8px;
+}
+
+.worksheet-writing-box {
+  border: 1px solid #888;
+  height: 90px;
+  background-image: repeating-linear-gradient(to bottom, transparent, transparent 22px, #ddd 23px);
+}
+
+.worksheet-answer-key {
+  margin-top: 24px;
+  border-top: 2px dashed #cbd5e1;
+  padding-top: 16px;
+}
+
+.worksheet-answer-list {
+  column-count: 2;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.worksheet-answer-list li {
+  margin-bottom: 6px;
+}
+
+.worksheet-font-credit {
+  margin-top: 16px;
+  font-size: 11px;
+  color: #9ca3af;
+}
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  .worksheet-print-area,
+  .worksheet-print-area * {
+    visibility: visible;
+  }
+  .worksheet-print-area {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    border: none;
+    padding: 0;
+  }
+  .worksheet-item {
+    break-inside: avoid;
+  }
+  .worksheet-answer-key {
+    break-before: page;
+  }
+}

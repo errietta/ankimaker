@@ -1,6 +1,7 @@
 import { SentenceCard, WritingCardData } from "../types/Cards";
-import { AnkiConnectResult } from "../types/AnkiConnect";
+import { AnkiConnectResult, AnkiCardInfo } from "../types/AnkiConnect";
 import { AppSettings } from "../types/AppSettings";
+import { buildDueQuery } from "../service/worksheet";
 
 
 function constructAnkiPayload(settings: AppSettings, sentence: SentenceCard, translationLanguage: string="jp-JP") {
@@ -132,4 +133,48 @@ export async function addWritingCardToAnki(
   } catch (e) {
     return { error: String(e) };
   }
+}
+
+async function ankiConnectRequest<T>(url: string, action: string, params: Record<string, any> = {}): Promise<T> {
+  let response: Response;
+  try {
+    response = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action, version: 6, params }),
+    });
+  } catch {
+    throw new Error(
+      `Could not reach AnkiConnect at ${url}. Make sure Anki is open with the AnkiConnect add-on ` +
+        "enabled, and that this app's origin has been added to AnkiConnect's webCorsOriginList."
+    );
+  }
+
+  const body = await response.json();
+  if (body.error) throw new Error(`AnkiConnect error: ${body.error}`);
+  return body.result as T;
+}
+
+/**
+ * Fetch cards due today from `deck` (including its subdecks) for the kanji
+ * worksheet feature. Throws with a user-facing message if AnkiConnect is
+ * unreachable or no due cards are found.
+ */
+export async function fetchDueWorksheetCards(
+  deck: string,
+  settings: AppSettings,
+  options: { maxCards?: number } = {}
+): Promise<AnkiCardInfo[]> {
+  const query = buildDueQuery(deck);
+  let cardIds = await ankiConnectRequest<number[]>(settings.ankiConnectUrl, "findCards", { query });
+
+  if (!cardIds || cardIds.length === 0) {
+    throw new Error(`No due cards found in deck "${deck}". Double-check the deck name and that you have cards due today.`);
+  }
+
+  if (options.maxCards) {
+    cardIds = cardIds.slice(0, options.maxCards);
+  }
+
+  return ankiConnectRequest<AnkiCardInfo[]>(settings.ankiConnectUrl, "cardsInfo", { cards: cardIds });
 }

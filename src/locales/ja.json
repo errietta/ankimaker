@@ -51,6 +51,18 @@
   "loading_stroke_data": "筆順データを読み込み中…",
   "loading_stroke_hint": "初回のみ — 次回からはオフラインでも動作します",
   "loading_stroke_error": "筆順データの読み込みに失敗しました。",
-  "retry": "再試行"
+  "retry": "再試行",
+  "tab_worksheet": "ワークシート",
+  "worksheet_deck": "デッキ（サブデッキを含む）",
+  "worksheet_max_cards": "最大カード数",
+  "worksheet_no_limit": "制限なし",
+  "worksheet_include_answer_key": "解答欄を含める",
+  "worksheet_fetch": "期限のカードを取得",
+  "worksheet_loading": "取得中...",
+  "worksheet_card_count": "{{count}}枚のカードを読み込みました",
+  "worksheet_print": "印刷 / PDFとして保存",
+  "worksheet_title": "書き取りワークシート",
+  "worksheet_answer_key": "解答",
+  "worksheet_font_credit": "フォント: HGKyokashotai（OnlineWebFonts.com、CC BY 4.0）"
 }
 
